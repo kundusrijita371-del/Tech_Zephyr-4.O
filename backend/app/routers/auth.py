@@ -108,3 +108,4 @@ def list_demo_accounts() -> list[DemoAccountPublicInfo]:
     CRITICAL: Passwords and sensitive credentials are NEVER returned.
     """
     return get_demo_accounts_metadata()
+

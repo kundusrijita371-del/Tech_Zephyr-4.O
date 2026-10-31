@@ -19,3 +19,4 @@ if __name__ == "__main__":
     print("Seeding CIT judge demo accounts...")
     res = seed_demo_accounts(force=True)
     print(f"Result: {res['total']} accounts processed ({res['created']} created, {res['updated']} updated).")
+

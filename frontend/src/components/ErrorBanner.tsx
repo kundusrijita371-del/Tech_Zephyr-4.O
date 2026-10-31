@@ -15,9 +15,9 @@ export function ErrorBanner({
   isRetrying,
 }: ErrorBannerProps) {
   return (
-    <div className="rounded-2xl border border-rose-200 bg-rose-50/70 p-6 text-rose-900 shadow-xs">
+    <div className="rounded-2xl border border-rose-900/60 bg-rose-950/40 p-6 text-rose-200 shadow-xs">
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-900/50 border border-rose-800/50 text-[#FB7185]">
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
@@ -30,13 +30,13 @@ export function ErrorBanner({
 
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-sm font-bold text-rose-950">
+            <h3 className="text-sm font-bold text-rose-300">
               Backend Connection Required
             </h3>
             <button
               onClick={onRetry}
               disabled={isRetrying}
-              className="flex items-center gap-1.5 rounded-lg bg-rose-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 rounded-lg bg-[#FB7185] hover:bg-rose-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
             >
               <svg
                 className={`h-3.5 w-3.5 ${isRetrying ? "animate-spin" : ""}`}
@@ -55,22 +55,22 @@ export function ErrorBanner({
             </button>
           </div>
 
-          <p className="text-xs text-rose-800 leading-relaxed">
+          <p className="text-xs text-rose-200/90 leading-relaxed">
             Could not retrieve dataset statistics from the FastAPI backend at{" "}
-            <code className="rounded bg-rose-100/80 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-rose-900">
+            <code className="rounded bg-rose-900/60 border border-rose-800/40 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-rose-100">
               {API_BASE}
             </code>
             . As mandated by development rules, fallback fake data is strictly prohibited.
           </p>
 
-          <div className="rounded-lg bg-rose-900/10 p-3 text-xs font-mono text-rose-950 space-y-1">
-            <div className="text-[11px] font-sans font-semibold text-rose-900">
+          <div className="rounded-lg bg-[#101014] border border-rose-900/40 p-3 text-xs font-mono text-rose-200 space-y-1">
+            <div className="text-[11px] font-sans font-semibold text-rose-300">
               To start the backend server, execute in your terminal:
             </div>
-            <div className="text-[11px] bg-rose-950 text-rose-50 p-2 rounded select-all">
+            <div className="text-[11px] bg-[#19191F] border border-rose-900/50 text-[#F4F2FA] p-2 rounded select-all font-mono">
               cd backend ; .venv\Scripts\uvicorn app.main:app --reload
             </div>
-            <div className="text-[10px] text-rose-700 font-sans mt-1">
+            <div className="text-[10px] text-rose-400 font-sans mt-1">
               Details: {errorMessage}
             </div>
           </div>
@@ -79,4 +79,3 @@ export function ErrorBanner({
     </div>
   );
 }
-

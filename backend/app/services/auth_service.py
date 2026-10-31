@@ -171,3 +171,4 @@ class AuthService:
             conn.commit()
         finally:
             conn.close()
+

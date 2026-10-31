@@ -101,42 +101,42 @@ export function ComingSoonView({ tabId, onBackToOverview }: ComingSoonViewProps)
 
   return (
     <div className="mx-auto max-w-4xl py-6 space-y-6">
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-8 shadow-xs">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-5">
+      <div className="rounded-2xl border border-[#30303A] bg-[#19191F] p-8 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#30303A] pb-5">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-semibold text-blue-600 uppercase tracking-wider">
+              <span className="font-mono text-xs font-semibold text-[#A78BFA] uppercase tracking-wider">
                 {info.milestone}
               </span>
-              <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+              <span className="rounded-full bg-amber-950/60 border border-amber-800/40 px-2.5 py-0.5 text-xs font-semibold text-amber-300">
                 In Development Pipeline
               </span>
             </div>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#F4F2FA]">
               {info.title}
             </h2>
           </div>
           <button
             onClick={onBackToOverview}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer"
+            className="rounded-lg border border-[#30303A] bg-[#202027] px-4 py-2 text-xs font-semibold text-[#F4F2FA] shadow-xs hover:bg-[#292933] hover:border-[#8B5CF6]/50 transition-colors cursor-pointer"
           >
             ← Back to Overview
           </button>
         </div>
 
-        <p className="mt-5 text-sm leading-relaxed text-slate-600">
+        <p className="mt-5 text-sm leading-relaxed text-[#A1A1AA]">
           {info.description}
         </p>
 
         {/* Expected Deliverables */}
-        <div className="mt-6 rounded-xl border border-slate-100 bg-slate-50/70 p-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+        <div className="mt-6 rounded-xl border border-[#30303A] bg-[#202027] p-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#F4F2FA]">
             Planned Deliverables
           </h3>
           <ul className="mt-3 space-y-2">
             {info.expectedDeliverables.map((item, idx) => (
-              <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-600">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">
+              <li key={idx} className="flex items-start gap-2.5 text-xs text-[#A1A1AA]">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 text-[#A78BFA] text-[10px] font-bold">
                   {idx + 1}
                 </span>
                 <span className="mt-0.5 leading-normal">{item}</span>
@@ -147,11 +147,11 @@ export function ComingSoonView({ tabId, onBackToOverview }: ComingSoonViewProps)
 
         {/* Technical Stack Pills */}
         <div className="mt-6 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500">Tech Stack:</span>
+          <span className="text-xs font-semibold text-[#71717A]">Tech Stack:</span>
           {info.technicalStack.map((tech, idx) => (
             <span
               key={idx}
-              className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs"
+              className="rounded-md border border-[#30303A] bg-[#202027] px-2.5 py-1 text-xs font-medium text-[#F4F2FA] shadow-2xs"
             >
               {tech}
             </span>
@@ -161,4 +161,3 @@ export function ComingSoonView({ tabId, onBackToOverview }: ComingSoonViewProps)
     </div>
   );
 }
-

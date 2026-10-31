@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #101014;
+  --foreground: #F4F2FA;
+  --obsidian-bg: #101014;
+  --obsidian-sidebar: #141419;
+  --obsidian-surface: #19191F;
+  --obsidian-card: #202027;
+  --obsidian-hover: #292933;
+  --obsidian-border: #30303A;
+  --obsidian-border-subtle: #24242E;
+  --lavender-primary: #A78BFA;
+  --lavender-violet: #8B5CF6;
+  --text-main: #F4F2FA;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  --status-success: #34D399;
+  --status-warning: #FBBF24;
+  --status-error: #FB7185;
 }
 
 @theme inline {
@@ -10,8 +25,49 @@
   --color-foreground: var(--foreground);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom dark scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141419;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #30303A;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8B5CF6;
+}
+
+/* Dark focus ring utility */
+:focus-visible {
+  outline: 2px solid #8B5CF6;
+  outline-offset: 1px;
+}
+
+/* Text selection style */
+::selection {
+  background-color: rgba(139, 92, 246, 0.35);
+  color: #F4F2FA;
 }

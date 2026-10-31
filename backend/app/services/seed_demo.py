@@ -181,3 +181,4 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     result = seed_demo_accounts(force=True)
     print(f"Seed completed: {result}")
+

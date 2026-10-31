@@ -240,3 +240,4 @@ class TestDatabaseSecurityAndIdempotency:
             assert "password" not in item
             assert "hashed_password" not in item
             assert "salt" not in item
+

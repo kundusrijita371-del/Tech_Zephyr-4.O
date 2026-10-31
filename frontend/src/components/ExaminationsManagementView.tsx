@@ -92,20 +92,20 @@ export function ExaminationsManagementView() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-[#30303A] bg-[#19191F] p-6 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold text-blue-600 uppercase tracking-wider">
+            <span className="font-mono text-xs font-semibold text-[#A78BFA] uppercase tracking-wider">
               Milestone 03 Active
             </span>
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+            <span className="rounded-full bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 text-xs font-semibold text-[#34D399]">
               OR-Tools CP-SAT Exam Engine
             </span>
           </div>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#F4F2FA]">
             CIT Midsem Examination Scheduler
           </h2>
-          <p className="mt-1 text-sm text-slate-500 max-w-2xl">
+          <p className="mt-1 text-sm text-[#A1A1AA] max-w-2xl leading-relaxed">
             Schedules all 41 examinations across 6 days (MON–SAT) and 2 daily sessions (AM: 09:30–11:30, PM: 14:00–16:00).
             Strictly enforces the 50% room exam capacity rule, multi-room allocation for large cohorts, and avoids group clashes.
           </p>
@@ -115,7 +115,7 @@ export function ExaminationsManagementView() {
           <button
             onClick={handleGenerate}
             disabled={isSolving}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition cursor-pointer"
           >
             {isSolving ? (
               <>
@@ -163,7 +163,7 @@ export function ExaminationsManagementView() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-rose-800/50 bg-rose-950/40 p-4 text-sm text-[#FB7185]">
           <div className="flex items-start gap-2">
             <span className="font-semibold">Error:</span>
             <span>{error}</span>
@@ -174,63 +174,63 @@ export function ExaminationsManagementView() {
       {/* Solver Metrics Cards */}
       {examData && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Solver Status</div>
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Solver Status</div>
             <div className="mt-1 flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              <span className="font-bold text-slate-900 text-sm">
+              <span className="h-2 w-2 rounded-full bg-[#34D399]" />
+              <span className="font-bold text-[#F4F2FA] text-sm">
                 {examData.metadata.solver_status}
               </span>
             </div>
-            <div className="mt-1 text-xs text-slate-400">
+            <div className="mt-1 text-xs text-[#71717A]">
               {examData.metadata.solve_time_seconds.toFixed(2)}s solve time
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Exams Scheduled</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Exams Scheduled</div>
+            <div className="mt-1 text-lg font-bold text-[#F4F2FA]">
               {examData.metadata.scheduled_exams} / {examData.metadata.total_exams}
             </div>
-            <div className="mt-1 text-xs text-emerald-600 font-medium">100% Assigned</div>
+            <div className="mt-1 text-xs text-[#34D399] font-medium">100% Assigned</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Students Seated</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Students Seated</div>
+            <div className="mt-1 text-lg font-bold text-[#F4F2FA]">
               {examData.metadata.total_students_seated.toLocaleString()}
             </div>
-            <div className="mt-1 text-xs text-slate-400">Across 41 examinations</div>
+            <div className="mt-1 text-xs text-[#71717A]">Across 41 examinations</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Effective Seats</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Effective Seats</div>
+            <div className="mt-1 text-lg font-bold text-[#F4F2FA]">
               {examData.metadata.total_capacity_provided.toLocaleString()}
             </div>
-            <div className="mt-1 text-xs text-emerald-600 font-medium">50% capacity rule applied</div>
+            <div className="mt-1 text-xs text-[#34D399] font-medium">50% capacity rule applied</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Hard Violations</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Hard Violations</div>
+            <div className="mt-1 text-lg font-bold">
               {examData.metadata.hard_violation_count === 0 ? (
-                <span className="text-emerald-600">0</span>
+                <span className="text-[#34D399]">0</span>
               ) : (
-                <span className="text-red-600">
+                <span className="text-[#FB7185]">
                   {examData.metadata.hard_violation_count}
                 </span>
               )}
             </div>
-            <div className="mt-1 text-xs text-slate-400">Rules E1, E2, H3, H4, H5</div>
+            <div className="mt-1 text-xs text-[#71717A]">Rules E1, E2, H3, H4, H5</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Soft Penalty</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Soft Penalty</div>
+            <div className="mt-1 text-lg font-bold text-[#A78BFA]">
               {examData.metadata.soft_penalty}
             </div>
-            <div className="mt-1 text-xs text-emerald-600 font-medium">
+            <div className="mt-1 text-xs text-[#34D399] font-medium">
               &le; 1 exam/group/day
             </div>
           </div>
@@ -242,14 +242,14 @@ export function ExaminationsManagementView() {
         <div
           className={`flex items-center justify-between rounded-xl p-4 border ${
             validation.is_valid
-              ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-              : "bg-red-50 border-red-200 text-red-900"
+              ? "bg-emerald-950/30 border-emerald-800/40 text-[#34D399]"
+              : "bg-rose-950/30 border-rose-800/40 text-[#FB7185]"
           }`}
         >
           <div className="flex items-center gap-3">
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                validation.is_valid ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+                validation.is_valid ? "bg-emerald-700 text-white" : "bg-rose-700 text-white"
               }`}
             >
               {validation.is_valid ? (
@@ -283,34 +283,36 @@ export function ExaminationsManagementView() {
               )}
             </div>
             <div>
-              <div className="font-semibold text-sm">
+              <div className="font-semibold text-sm text-[#F4F2FA]">
                 Official Starter Pack Validator:{" "}
-                {validation.is_valid ? "PASSED (0 Hard Violations)" : "FAILED"}
+                <span className={validation.is_valid ? "text-[#34D399]" : "text-[#FB7185]"}>
+                  {validation.is_valid ? "PASSED (0 Hard Violations)" : "FAILED"}
+                </span>
               </div>
-              <div className="text-xs opacity-80">
+              <div className="text-xs text-[#A1A1AA]">
                 Verified against official validator.py (check_exams): 41 scheduled, valid rooms, 50% capacity, no room/group clashes.
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs font-medium">Soft Score Penalty</div>
-            <div className="text-base font-bold font-mono">{validation.soft_penalty}</div>
+            <div className="text-xs font-medium text-[#71717A]">Soft Score Penalty</div>
+            <div className="text-base font-bold font-mono text-[#A78BFA]">{validation.soft_penalty}</div>
           </div>
         </div>
       )}
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 rounded-xl border border-[#30303A] bg-[#19191F] p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">
+          <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mr-1">
             Day:
           </span>
           <button
             onClick={() => setSelectedDay("ALL")}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition cursor-pointer ${
               selectedDay === "ALL"
-                ? "bg-blue-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-[#8B5CF6] text-white font-bold"
+                : "bg-[#202027] text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-[#30303A]"
             }`}
           >
             All Days
@@ -319,10 +321,10 @@ export function ExaminationsManagementView() {
             <button
               key={d}
               onClick={() => setSelectedDay(d)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition cursor-pointer ${
                 selectedDay === d
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-[#8B5CF6] text-white font-bold"
+                  : "bg-[#202027] text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-[#30303A]"
               }`}
             >
               {d}
@@ -331,15 +333,15 @@ export function ExaminationsManagementView() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">
+          <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mr-1">
             Session:
           </span>
           <button
             onClick={() => setSelectedSession("ALL")}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition cursor-pointer ${
               selectedSession === "ALL"
-                ? "bg-blue-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-[#8B5CF6] text-white font-bold"
+                : "bg-[#202027] text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-[#30303A]"
             }`}
           >
             All
@@ -348,10 +350,10 @@ export function ExaminationsManagementView() {
             <button
               key={s.id}
               onClick={() => setSelectedSession(s.id)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition cursor-pointer ${
                 selectedSession === s.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-[#8B5CF6] text-white font-bold"
+                  : "bg-[#202027] text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-[#30303A]"
               }`}
             >
               {s.id} ({s.time})
@@ -364,7 +366,7 @@ export function ExaminationsManagementView() {
               placeholder="Search exam, room, group..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-[#30303A] bg-[#141419] px-3 py-1.5 text-xs text-[#F4F2FA] placeholder:text-[#71717A] focus:border-[#A78BFA] focus:outline-none"
             />
           </div>
         </div>
@@ -372,13 +374,13 @@ export function ExaminationsManagementView() {
 
       {/* Main Examination Grid / Table */}
       {loading ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500">
-          <div className="inline-block animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mb-3" />
+        <div className="rounded-2xl border border-[#30303A] bg-[#19191F] p-12 text-center text-[#A1A1AA]">
+          <div className="inline-block animate-spin h-8 w-8 border-4 border-[#8B5CF6] border-t-transparent rounded-full mb-3" />
           <p className="text-sm">Loading examination schedule...</p>
         </div>
       ) : !examData ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-16 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-blue-600 mb-4">
+        <div className="rounded-2xl border border-dashed border-[#30303A] bg-[#19191F] p-16 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[#A78BFA] mb-4">
             <svg
               className="h-8 w-8"
               fill="none"
@@ -393,39 +395,39 @@ export function ExaminationsManagementView() {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-bold text-slate-900">
+          <h3 className="text-lg font-bold text-[#F4F2FA]">
             No Examination Schedule Generated Yet
           </h3>
-          <p className="mt-1 text-sm text-slate-500 max-w-md mx-auto">
+          <p className="mt-1 text-sm text-[#71717A] max-w-md mx-auto">
             Click &quot;Generate Examination Schedule&quot; above to solve and allocate rooms for all 41 midsem examinations with Google OR-Tools CP-SAT.
           </p>
           <div className="mt-6">
             <button
               onClick={handleGenerate}
               disabled={isSolving}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 transition cursor-pointer"
             >
               Generate Examination Schedule Now
             </button>
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">
+        <div className="rounded-2xl border border-[#30303A] bg-[#19191F] shadow-xs overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#30303A] flex items-center justify-between bg-[#141419]">
+            <h3 className="text-sm font-semibold text-[#F4F2FA]">
               Midsem Examination Sessions ({filteredExams.length} of {examData.schedule.exams.length})
             </h3>
-            <span className="text-xs text-slate-500 font-mono">
+            <span className="text-xs text-[#A78BFA] font-mono">
               Dataset: {examData.schedule.dataset_id}
             </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b border-slate-200">
+              <thead className="bg-[#141419] text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider border-b border-[#30303A]">
                 <tr>
                   <th className="px-6 py-3.5">Exam ID / Subject</th>
-                  <th className="px-6 py-3.5">Day & Slot</th>
+                  <th className="px-6 py-3.5">Day &amp; Slot</th>
                   <th className="px-6 py-3.5">Student Groups</th>
                   <th className="px-6 py-3.5 text-right">Students</th>
                   <th className="px-6 py-3.5">Allocated Rooms</th>
@@ -433,7 +435,7 @@ export function ExaminationsManagementView() {
                   <th className="px-6 py-3.5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#30303A] bg-[#19191F]">
                 {filteredExams.map((ex) => {
                   const isMultiRoom = ex.rooms.length > 1;
                   const isSurplus = ex.effective_capacity >= ex.size;
@@ -441,10 +443,10 @@ export function ExaminationsManagementView() {
                   return (
                     <tr
                       key={ex.exam_id}
-                      className="hover:bg-slate-50/80 transition-colors"
+                      className="hover:bg-[#202027] transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <div className="font-mono font-bold text-slate-900">
+                        <div className="font-mono font-bold text-[#F4F2FA]">
                           {ex.exam_id}
                         </div>
                         {ex.course_ids.length > 0 && (
@@ -452,7 +454,7 @@ export function ExaminationsManagementView() {
                             {ex.course_ids.map((cid) => (
                               <span
                                 key={cid}
-                                className="inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600"
+                                className="inline-block rounded bg-[#202027] border border-[#30303A] px-1.5 py-0.5 text-[10px] font-medium text-[#A1A1AA]"
                               >
                                 {cid}
                               </span>
@@ -463,14 +465,14 @@ export function ExaminationsManagementView() {
 
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
-                          <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
+                          <span className="inline-flex items-center rounded-md bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 px-2 py-1 text-xs font-bold text-[#A78BFA]">
                             {ex.day}
                           </span>
                           <span
                             className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-semibold ${
                               ex.session === "AM"
-                                ? "bg-amber-50 text-amber-700 border border-amber-200/60"
-                                : "bg-purple-50 text-purple-700 border border-purple-200/60"
+                                ? "bg-amber-950/60 text-amber-300 border border-amber-800/50"
+                                : "bg-purple-950/60 text-purple-300 border border-purple-800/50"
                             }`}
                           >
                             {ex.session} (
@@ -484,7 +486,7 @@ export function ExaminationsManagementView() {
                           {ex.groups.map((g) => (
                             <span
                               key={g}
-                              className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700"
+                              className="inline-block rounded-md bg-[#202027] border border-[#30303A] px-2 py-0.5 text-xs font-medium text-[#F4F2FA]"
                             >
                               {g}
                             </span>
@@ -492,7 +494,7 @@ export function ExaminationsManagementView() {
                         </div>
                       </td>
 
-                      <td className="px-6 py-4 text-right font-semibold text-slate-800 whitespace-nowrap">
+                      <td className="px-6 py-4 text-right font-semibold text-[#F4F2FA] whitespace-nowrap font-mono">
                         {ex.size}
                       </td>
 
@@ -501,13 +503,13 @@ export function ExaminationsManagementView() {
                           {ex.rooms.map((rid) => (
                             <span
                               key={rid}
-                              className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 text-xs font-semibold text-emerald-800 font-mono"
+                              className="inline-flex items-center gap-1 rounded-md bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 text-xs font-semibold text-[#34D399] font-mono"
                             >
                               {rid}
                             </span>
                           ))}
                           {isMultiRoom && (
-                            <span className="text-[10px] font-medium text-slate-400">
+                            <span className="text-[10px] font-medium text-[#71717A]">
                               ({ex.rooms.length} rooms)
                             </span>
                           )}
@@ -517,12 +519,12 @@ export function ExaminationsManagementView() {
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                         <span
                           className={`font-semibold font-mono text-sm ${
-                            isSurplus ? "text-slate-900" : "text-red-600"
+                            isSurplus ? "text-[#F4F2FA]" : "text-[#FB7185]"
                           }`}
                         >
                           {ex.effective_capacity} seats
                         </span>
-                        <div className="text-[10px] text-slate-400">
+                        <div className="text-[10px] text-[#71717A]">
                           {ex.effective_capacity - ex.size >= 0
                             ? `+${ex.effective_capacity - ex.size} slack`
                             : "DEFICIT"}
@@ -530,7 +532,7 @@ export function ExaminationsManagementView() {
                       </td>
 
                       <td className="px-6 py-4 text-center whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100/70 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 text-xs font-medium text-[#34D399]">
                           <svg
                             className="h-3 w-3"
                             fill="currentColor"
@@ -556,4 +558,3 @@ export function ExaminationsManagementView() {
     </div>
   );
 }
-

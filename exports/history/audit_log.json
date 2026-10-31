@@ -115,5 +115,18 @@
     "soft_penalty": 143,
     "backup_file_path": "C:\\Users\\SUBHAM\\CIT-Campus-Management\\exports\\history\\schedule_v1.json",
     "reason": "Approved immediately for AV repair"
+  },
+  {
+    "version_id": "v1",
+    "version_number": 1,
+    "disruption_id": "prop-test-approve",
+    "proposal_id": "prop-prop-test-approve-1793481601",
+    "approved_by": "SuperAdmin",
+    "timestamp": "2026-10-31T21:20:01.530314+00:00",
+    "sessions_moved_count": 0,
+    "hard_violation_count": 0,
+    "soft_penalty": 143,
+    "backup_file_path": "C:\\Users\\SUBHAM\\CIT-Campus-Management\\exports\\history\\schedule_v1.json",
+    "reason": "Approved immediately for AV repair"
   }
 ]

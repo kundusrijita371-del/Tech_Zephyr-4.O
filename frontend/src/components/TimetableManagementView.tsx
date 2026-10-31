@@ -16,13 +16,12 @@ import type {
 } from "@/lib/types";
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI"] as const;
-const PERIODS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 export function TimetableManagementView() {
   const [timetable, setTimetable] = useState<TimetableResponse | null>(null);
   const [validation, setValidation] = useState<TimetableValidationResponse | null>(null);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [groups, setGroups] = useState<StudentGroup[]>([]);
+  const [, setRooms] = useState<Room[]>([]);
+  const [, setGroups] = useState<StudentGroup[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSolving, setIsSolving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +45,7 @@ export function TimetableManagementView() {
         if (valRes.status === "fulfilled") setValidation(valRes.value);
         if (roomsRes.status === "fulfilled") setRooms(roomsRes.value);
         if (groupsRes.status === "fulfilled") setGroups(groupsRes.value);
-      } catch (err) {
+      } catch {
         // No generated timetable yet is expected before first run
       } finally {
         setLoading(false);
@@ -90,20 +89,20 @@ export function TimetableManagementView() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-[#30303A] bg-[#19191F] p-6 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold text-blue-600 uppercase tracking-wider">
+            <span className="font-mono text-xs font-semibold text-[#A78BFA] uppercase tracking-wider">
               Milestone 02 Active
             </span>
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+            <span className="rounded-full bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 text-xs font-semibold text-[#34D399]">
               OR-Tools CP-SAT Engine
             </span>
           </div>
-          <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-[#F4F2FA]">
             University Timetable Generator
           </h2>
-          <p className="mt-1 text-xs text-slate-500 max-w-xl leading-relaxed">
+          <p className="mt-1 text-xs text-[#A1A1AA] max-w-xl leading-relaxed">
             Schedules all 189 teaching sessions into Mon–Fri teaching periods (P1–P9) across 27 campus rooms with 0 hard conflicts guaranteed.
           </p>
         </div>
@@ -111,7 +110,7 @@ export function TimetableManagementView() {
         <button
           onClick={handleGenerate}
           disabled={isSolving}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 active:scale-95 disabled:opacity-50 transition-all cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition-all cursor-pointer shrink-0"
         >
           {isSolving ? (
             <>
@@ -134,7 +133,7 @@ export function TimetableManagementView() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-800">
+        <div className="rounded-xl border border-rose-800/50 bg-rose-950/40 p-4 text-xs text-[#FB7185]">
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -142,40 +141,40 @@ export function TimetableManagementView() {
       {/* Solver Metrics Bar */}
       {timetable?.metadata && (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
-            <span className="text-[10px] font-semibold text-slate-500 uppercase">Solver Status</span>
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <span className="text-[10px] font-semibold text-[#71717A] uppercase">Solver Status</span>
             <div className="mt-1 flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              <span className="text-lg font-bold text-slate-900 font-mono">
+              <span className="h-2 w-2 rounded-full bg-[#34D399]" />
+              <span className="text-lg font-bold text-[#F4F2FA] font-mono">
                 {timetable.metadata.solver_status}
               </span>
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
-            <span className="text-[10px] font-semibold text-slate-500 uppercase">Solve Duration</span>
-            <div className="mt-1 text-lg font-bold text-slate-900 font-mono">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <span className="text-[10px] font-semibold text-[#71717A] uppercase">Solve Duration</span>
+            <div className="mt-1 text-lg font-bold text-[#F4F2FA] font-mono">
               {timetable.metadata.solve_time_seconds}s
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
-            <span className="text-[10px] font-semibold text-slate-500 uppercase">Scheduled</span>
-            <div className="mt-1 text-lg font-bold text-emerald-600 font-mono">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <span className="text-[10px] font-semibold text-[#71717A] uppercase">Scheduled</span>
+            <div className="mt-1 text-lg font-bold text-[#34D399] font-mono">
               {timetable.metadata.scheduled_sessions} / {timetable.metadata.total_sessions}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
-            <span className="text-[10px] font-semibold text-slate-500 uppercase">Hard Violations</span>
-            <div className="mt-1 text-lg font-bold text-emerald-600 font-mono">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <span className="text-[10px] font-semibold text-[#71717A] uppercase">Hard Violations</span>
+            <div className="mt-1 text-lg font-bold text-[#34D399] font-mono">
               0
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs col-span-2 sm:col-span-1">
-            <span className="text-[10px] font-semibold text-slate-500 uppercase">Soft Penalty</span>
-            <div className="mt-1 text-lg font-bold text-blue-600 font-mono">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs col-span-2 sm:col-span-1">
+            <span className="text-[10px] font-semibold text-[#71717A] uppercase">Soft Penalty</span>
+            <div className="mt-1 text-lg font-bold text-[#A78BFA] font-mono">
               {timetable.metadata.soft_penalty} pts
             </div>
           </div>
@@ -184,25 +183,25 @@ export function TimetableManagementView() {
 
       {/* Official Validation Card */}
       {validation && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
+        <div className="rounded-xl border border-emerald-800/40 bg-emerald-950/30 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5 text-[#34D399]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-xs font-bold text-emerald-900">
+              <span className="text-xs font-bold text-[#34D399]">
                 Official check_timetable() Passed: Zero Hard Violations
               </span>
             </div>
-            <span className="font-mono text-[11px] text-emerald-800">
+            <span className="font-mono text-[11px] text-[#A1A1AA]">
               Draft exported to exports/timetable_draft.json
             </span>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
             {Object.entries(validation.soft_penalties).map(([code, val]) => (
-              <span key={code} className="rounded-md bg-white/80 px-2.5 py-1 font-mono text-slate-700 border border-emerald-100">
-                {code}: <strong>{val}</strong>
+              <span key={code} className="rounded-md bg-[#202027] px-2.5 py-1 font-mono text-[#A1A1AA] border border-[#30303A]">
+                {code}: <strong className="text-[#F4F2FA]">{val}</strong>
               </span>
             ))}
           </div>
@@ -211,28 +210,28 @@ export function TimetableManagementView() {
 
       {/* Schedule Table / Explorer */}
       {timetable && (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div className="rounded-2xl border border-[#30303A] bg-[#19191F] p-6 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#30303A] pb-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-slate-900">
+              <h3 className="text-sm font-bold text-[#F4F2FA]">
                 Generated Assignments
               </h3>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 font-mono">
+              <span className="rounded-full bg-[#202027] border border-[#30303A] px-2.5 py-0.5 text-xs font-semibold text-[#A78BFA] font-mono">
                 {filteredSessions.length} sessions shown
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               {/* Day filter */}
-              <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs">
+              <div className="flex items-center rounded-lg border border-[#30303A] bg-[#141419] p-0.5 text-xs">
                 {["ALL", ...DAYS].map((d) => (
                   <button
                     key={d}
                     onClick={() => setSelectedDay(d)}
-                    className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                    className={`rounded-md px-2.5 py-1 font-medium transition-colors cursor-pointer ${
                       selectedDay === d
-                        ? "bg-white font-bold text-blue-600 shadow-2xs"
-                        : "text-slate-600 hover:text-slate-900"
+                        ? "bg-[#8B5CF6] font-bold text-white shadow-2xs"
+                        : "text-[#A1A1AA] hover:text-[#F4F2FA]"
                     }`}
                   >
                     {d}
@@ -246,15 +245,15 @@ export function TimetableManagementView() {
                 placeholder="Search session or room..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-1 text-xs text-slate-800 focus:border-blue-500 focus:outline-hidden"
+                className="rounded-lg border border-[#30303A] bg-[#141419] px-3 py-1 text-xs text-[#F4F2FA] placeholder:text-[#71717A] focus:border-[#A78BFA] focus:outline-hidden"
               />
             </div>
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-[#30303A]">
             <table className="w-full text-left text-xs">
-              <thead className="border-b border-slate-200 bg-slate-50 font-semibold text-slate-600">
+              <thead className="border-b border-[#30303A] bg-[#141419] font-semibold text-[#A1A1AA]">
                 <tr>
                   <th className="px-4 py-2.5">Session ID</th>
                   <th className="px-4 py-2.5">Day</th>
@@ -263,13 +262,13 @@ export function TimetableManagementView() {
                   <th className="px-4 py-2.5">Assigned Room</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 font-mono">
+              <tbody className="divide-y divide-[#30303A] font-mono bg-[#19191F]">
                 {filteredSessions.slice(0, 50).map((s) => (
-                  <tr key={s.session_id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-4 py-2 font-bold text-slate-900">{s.session_id}</td>
-                    <td className="px-4 py-2 font-semibold text-blue-600">{s.day}</td>
-                    <td className="px-4 py-2 text-slate-700">P{s.start_period}</td>
-                    <td className="px-4 py-2 text-slate-500 font-sans">
+                  <tr key={s.session_id} className="hover:bg-[#202027] transition-colors">
+                    <td className="px-4 py-2 font-bold text-[#F4F2FA]">{s.session_id}</td>
+                    <td className="px-4 py-2 font-semibold text-[#A78BFA]">{s.day}</td>
+                    <td className="px-4 py-2 text-[#A1A1AA]">P{s.start_period}</td>
+                    <td className="px-4 py-2 text-[#71717A] font-sans">
                       {s.start_period === 1 ? "08:00 - 09:00" :
                        s.start_period === 2 ? "09:00 - 10:00" :
                        s.start_period === 3 ? "10:00 - 11:00" :
@@ -280,7 +279,7 @@ export function TimetableManagementView() {
                        s.start_period === 8 ? "16:00 - 17:00" : "17:00 - 18:00"}
                     </td>
                     <td className="px-4 py-2">
-                      <span className="rounded-md bg-slate-100 px-2 py-0.5 text-slate-800 font-semibold border border-slate-200/60">
+                      <span className="rounded-md bg-[#202027] px-2 py-0.5 text-[#F4F2FA] font-semibold border border-[#30303A]">
                         {s.room_id}
                       </span>
                     </td>
@@ -289,8 +288,8 @@ export function TimetableManagementView() {
               </tbody>
             </table>
             {filteredSessions.length > 50 && (
-              <div className="p-3 text-center text-xs text-slate-400 border-t border-slate-100">
-                Showing first 50 of {filteredSessions.length} assignments. View full draft in <code className="font-mono text-slate-600">exports/timetable_draft.json</code>.
+              <div className="p-3 text-center text-xs text-[#71717A] border-t border-[#30303A] bg-[#141419]">
+                Showing first 50 of {filteredSessions.length} assignments. View full draft in <code className="font-mono text-[#A78BFA]">exports/timetable_draft.json</code>.
               </div>
             )}
           </div>
@@ -298,14 +297,14 @@ export function TimetableManagementView() {
       )}
 
       {!timetable && !loading && !isSolving && (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center space-y-3">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+        <div className="rounded-2xl border border-dashed border-[#30303A] bg-[#19191F] p-12 text-center space-y-3">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[#A78BFA]">
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <h3 className="text-base font-bold text-slate-900">No Timetable Generated Yet</h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
+          <h3 className="text-base font-bold text-[#F4F2FA]">No Timetable Generated Yet</h3>
+          <p className="text-xs text-[#71717A] max-w-md mx-auto">
             Click &quot;Generate Timetable&quot; above to run the CP-SAT engine. It will place all 189 sessions with 0 hard violations and optimize faculty/student soft preferences.
           </p>
         </div>
@@ -313,4 +312,3 @@ export function TimetableManagementView() {
     </div>
   );
 }
-

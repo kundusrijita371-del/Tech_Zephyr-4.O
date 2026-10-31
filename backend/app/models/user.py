@@ -64,3 +64,4 @@ class DemoAccountPublicInfo(BaseModel):
     department: str | None = Field(default=None, description="Associated department")
     club: str | None = Field(default=None, description="Associated club")
     dashboard_scope: str = Field(..., description="Overview of accessible modules and features")
+

@@ -97,15 +97,15 @@ export function ModulesOverview() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-slate-900 tracking-tight">
+          <h2 className="text-base font-bold text-[#F4F2FA] tracking-tight">
             CIT Platform Modules Overview
           </h2>
-          <p className="text-xs text-slate-500">
-            Roadmap and development status across all 6 core campus management systems
+          <p className="text-xs text-[#71717A]">
+            Production roadmap and active status across all 6 core campus management systems
           </p>
         </div>
-        <span className="hidden sm:inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-          6 Modules Registered
+        <span className="hidden sm:inline-flex rounded-full bg-[#19191F] border border-[#30303A] px-3 py-1 text-xs font-medium text-[#A1A1AA]">
+          6 Modules Operational
         </span>
       </div>
 
@@ -113,50 +113,50 @@ export function ModulesOverview() {
         {MODULES.map((mod) => (
           <div
             key={mod.id}
-            className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:border-slate-300 hover:shadow-md"
+            className="flex flex-col justify-between rounded-2xl border border-[#30303A] bg-[#202027] p-5 shadow-xs transition-all hover:border-[#8B5CF6]/50 hover:shadow-lg hover:shadow-black/20"
           >
             <div>
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-[11px] font-semibold text-slate-600 uppercase tracking-wide">
+                <span className="font-mono text-[11px] font-semibold text-[#A78BFA] uppercase tracking-wide">
                   {mod.milestone}
                 </span>
                 {mod.status === "active" ? (
-                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    Active (M01)
+                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 text-[11px] font-semibold text-[#34D399]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#34D399]" />
+                    Active
                   </span>
                 ) : mod.status === "next" ? (
-                  <span className="flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                  <span className="flex items-center gap-1.5 rounded-full bg-blue-950/60 border border-blue-800/40 px-2.5 py-0.5 text-[11px] font-semibold text-blue-300">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                     Up Next
                   </span>
                 ) : (
-                  <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-500">
+                  <span className="rounded-full bg-[#292933] border border-[#30303A] px-2.5 py-0.5 text-[11px] font-medium text-[#71717A]">
                     Planned
                   </span>
                 )}
               </div>
 
-              <h3 className="mt-2 text-sm font-bold text-slate-900 tracking-tight">
+              <h3 className="mt-2 text-sm font-bold text-[#F4F2FA] tracking-tight">
                 {mod.title}
               </h3>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500">
+              <p className="mt-1 text-xs leading-relaxed text-[#A1A1AA]">
                 {mod.description}
               </p>
             </div>
 
-            <div className="mt-4 border-t border-slate-100 pt-3">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-600 mb-2">
+            <div className="mt-4 border-t border-[#30303A] pt-3">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#71717A] mb-2">
                 Key Capabilities
               </div>
               <ul className="space-y-1">
                 {mod.capabilities.map((cap, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center gap-2 text-[11px] text-slate-600"
+                    className="flex items-center gap-2 text-[11px] text-[#A1A1AA]"
                   >
                     <svg
-                      className="h-3 w-3 shrink-0 text-emerald-500"
+                      className="h-3 w-3 shrink-0 text-[#34D399]"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -177,4 +177,3 @@ export function ModulesOverview() {
     </div>
   );
 }
-

@@ -151,20 +151,20 @@ export function VenuesManagementView() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-[#30303A] bg-[#19191F] p-6 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold text-blue-600 uppercase tracking-wider">
+            <span className="font-mono text-xs font-semibold text-[#A78BFA] uppercase tracking-wider">
               Milestone 04 Active
             </span>
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+            <span className="rounded-full bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 text-xs font-semibold text-[#34D399]">
               Deterministic Priority Engine
             </span>
           </div>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#F4F2FA]">
             Spectra Fest Venue Manager (Week 7)
           </h2>
-          <p className="mt-1 text-sm text-slate-500 max-w-2xl">
+          <p className="mt-1 text-sm text-[#A1A1AA] max-w-2xl leading-relaxed">
             Processes all 25 booking requests in strict priority order. Enforces role category caps, submission timestamp tie-breakers, venue features &amp; accessibility, and guarantees zero priority inversions.
           </p>
         </div>
@@ -173,7 +173,7 @@ export function VenuesManagementView() {
           <button
             onClick={handleGenerate}
             disabled={isAllocating}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition cursor-pointer"
           >
             {isAllocating ? (
               <>
@@ -196,7 +196,7 @@ export function VenuesManagementView() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-rose-800/50 bg-rose-950/40 p-4 text-sm text-[#FB7185]">
           <span className="font-semibold">Error:</span> {error}
         </div>
       )}
@@ -204,46 +204,46 @@ export function VenuesManagementView() {
       {/* KPI Stats Cards */}
       {validation && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Total Requests</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">{bookings.length}</div>
-            <div className="mt-1 text-xs text-slate-400">All 25 evaluated</div>
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Total Requests</div>
+            <div className="mt-1 text-lg font-bold text-[#F4F2FA]">{bookings.length}</div>
+            <div className="mt-1 text-xs text-[#71717A]">All 25 evaluated</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Approved</div>
-            <div className="mt-1 text-lg font-bold text-emerald-600">{validation.approved_count}</div>
-            <div className="mt-1 text-xs text-emerald-600 font-medium">Inside windows</div>
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Approved</div>
+            <div className="mt-1 text-lg font-bold text-[#34D399]">{validation.approved_count}</div>
+            <div className="mt-1 text-xs text-[#34D399] font-medium">Inside windows</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Alternatives</div>
-            <div className="mt-1 text-lg font-bold text-amber-600">{validation.alternative_count}</div>
-            <div className="mt-1 text-xs text-amber-600 font-medium">Alternative offered</div>
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Alternatives</div>
+            <div className="mt-1 text-lg font-bold text-[#FBBF24]">{validation.alternative_count}</div>
+            <div className="mt-1 text-xs text-[#FBBF24] font-medium">Alternative offered</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Rejected</div>
-            <div className="mt-1 text-lg font-bold text-slate-700">{validation.rejected_count}</div>
-            <div className="mt-1 text-xs text-slate-400">1 cancelled, 1 oversized</div>
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Rejected</div>
+            <div className="mt-1 text-lg font-bold text-[#A1A1AA]">{validation.rejected_count}</div>
+            <div className="mt-1 text-xs text-[#71717A]">1 cancelled, 1 oversized</div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Booking Score</div>
-            <div className="mt-1 text-lg font-bold text-blue-600 font-mono">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Booking Score</div>
+            <div className="mt-1 text-lg font-bold text-[#A78BFA] font-mono">
               {validation.booking_score} / {validation.booking_score_max}
             </div>
-            <div className="mt-1 text-xs text-blue-600 font-medium">
+            <div className="mt-1 text-xs text-[#A78BFA] font-medium">
               {((validation.booking_score / validation.booking_score_max) * 100).toFixed(1)}% efficiency
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
-            <div className="text-xs font-medium text-slate-500">Priority Inversions</div>
-            <div className="mt-1 text-lg font-bold text-emerald-600">
+          <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4 shadow-xs">
+            <div className="text-xs font-medium text-[#71717A]">Priority Inversions</div>
+            <div className="mt-1 text-lg font-bold text-[#34D399]">
               {validation.priority_inversions.length}
             </div>
-            <div className="mt-1 text-xs text-emerald-600 font-medium">0 inversions guaranteed</div>
+            <div className="mt-1 text-xs text-[#34D399] font-medium">0 inversions guaranteed</div>
           </div>
         </div>
       )}
@@ -253,14 +253,14 @@ export function VenuesManagementView() {
         <div
           className={`flex items-center justify-between rounded-xl p-4 border ${
             validation.is_valid
-              ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-              : "bg-red-50 border-red-200 text-red-900"
+              ? "bg-emerald-950/30 border-emerald-800/40 text-[#34D399]"
+              : "bg-rose-950/30 border-rose-800/40 text-[#FB7185]"
           }`}
         >
           <div className="flex items-center gap-3">
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                validation.is_valid ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+                validation.is_valid ? "bg-emerald-700 text-white" : "bg-rose-700 text-white"
               }`}
             >
               {validation.is_valid ? (
@@ -274,36 +274,38 @@ export function VenuesManagementView() {
               )}
             </div>
             <div>
-              <div className="font-semibold text-sm">
+              <div className="font-semibold text-sm text-[#F4F2FA]">
                 Official Starter Pack Validator (check_bookings):{" "}
-                {validation.is_valid ? "PASSED (0 Hard Violations)" : "FAILED"}
+                <span className={validation.is_valid ? "text-[#34D399]" : "text-[#FB7185]"}>
+                  {validation.is_valid ? "PASSED (0 Hard Violations)" : "FAILED"}
+                </span>
               </div>
-              <div className="text-xs opacity-80">
+              <div className="text-xs text-[#A1A1AA]">
                 Rules B1, B2, B3, H13 verified. Zero duplicate decisions, zero cancelled approvals, zero ungrounded session overrides.
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs font-medium">Session Overrides</div>
-            <div className="text-base font-bold font-mono">{validation.session_overrides_count}</div>
+            <div className="text-xs font-medium text-[#71717A]">Session Overrides</div>
+            <div className="text-base font-bold font-mono text-[#A78BFA]">{validation.session_overrides_count}</div>
           </div>
         </div>
       )}
 
       {/* Filters and Search Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 rounded-xl border border-[#30303A] bg-[#19191F] p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">
+          <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mr-1">
             Status:
           </span>
           {["ALL", "APPROVED", "ALTERNATIVE_OFFERED", "REJECTED", "CANCELLED"].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition cursor-pointer ${
                 statusFilter === st
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-[#8B5CF6] text-white font-bold"
+                  : "bg-[#202027] text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-[#30303A]"
               }`}
             >
               {st === "ALTERNATIVE_OFFERED" ? "Alternative" : st.charAt(0) + st.slice(1).toLowerCase()}
@@ -312,17 +314,17 @@ export function VenuesManagementView() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">
+          <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mr-1">
             Category:
           </span>
           {["ALL", "institute_event", "guest_lecture", "department_event", "club_event"].map((cat) => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition cursor-pointer ${
                 categoryFilter === cat
-                  ? "bg-slate-800 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-[#8B5CF6] text-white font-bold"
+                  : "bg-[#202027] text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-[#30303A]"
               }`}
             >
               {cat === "ALL" ? "All" : cat.replace("_", " ")}
@@ -335,7 +337,7 @@ export function VenuesManagementView() {
               placeholder="Search request, venue, title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-[#30303A] bg-[#141419] px-3 py-1.5 text-xs text-[#F4F2FA] placeholder:text-[#71717A] focus:border-[#A78BFA] focus:outline-none"
             />
           </div>
         </div>
@@ -343,22 +345,22 @@ export function VenuesManagementView() {
 
       {/* Main Booking Requests Table */}
       {loading ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500">
-          <div className="inline-block animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mb-3" />
+        <div className="rounded-2xl border border-[#30303A] bg-[#19191F] p-12 text-center text-[#A1A1AA]">
+          <div className="inline-block animate-spin h-8 w-8 border-4 border-[#8B5CF6] border-t-transparent rounded-full mb-3" />
           <p className="text-sm">Loading Spectra Week bookings...</p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">
+        <div className="rounded-2xl border border-[#30303A] bg-[#19191F] shadow-xs overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#30303A] flex items-center justify-between bg-[#141419]">
+            <h3 className="text-sm font-semibold text-[#F4F2FA]">
               Spectra Week Booking Requests ({filteredBookings.length} of {bookings.length})
             </h3>
-            <span className="text-xs text-slate-500 font-mono">Week 7 Scheduling</span>
+            <span className="text-xs text-[#A78BFA] font-mono">Week 7 Scheduling</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b border-slate-200">
+              <thead className="bg-[#141419] text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider border-b border-[#30303A]">
                 <tr>
                   <th className="px-6 py-3.5">Request ID</th>
                   <th className="px-6 py-3.5">Title &amp; Requester</th>
@@ -369,7 +371,7 @@ export function VenuesManagementView() {
                   <th className="px-6 py-3.5 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#30303A] bg-[#19191F]">
                 {filteredBookings.map((b) => {
                   const dec = b.decision;
                   const isApproved = dec?.status === "approved";
@@ -379,34 +381,34 @@ export function VenuesManagementView() {
                   return (
                     <tr
                       key={b.id}
-                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
+                      className="hover:bg-[#202027] transition-colors cursor-pointer"
                       onClick={() => handleInspect(b)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-mono font-bold text-slate-900">{b.id}</div>
+                        <div className="font-mono font-bold text-[#F4F2FA]">{b.id}</div>
                         {b.is_cancelled && (
-                          <span className="mt-0.5 inline-block rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">
+                          <span className="mt-0.5 inline-block rounded bg-rose-950/60 border border-rose-800/50 px-1.5 py-0.5 text-[10px] font-semibold text-[#FB7185]">
                             CANCELLED
                           </span>
                         )}
                       </td>
 
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-slate-900 max-w-xs truncate">{b.title}</div>
-                        <div className="text-xs text-slate-500">{b.requester}</div>
+                        <div className="font-semibold text-[#F4F2FA] max-w-xs truncate">{b.title}</div>
+                        <div className="text-xs text-[#71717A]">{b.requester}</div>
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 capitalize">
+                        <span className="inline-flex items-center rounded-md bg-[#202027] border border-[#30303A] px-2 py-0.5 text-xs font-medium text-[#A1A1AA] capitalize">
                           {b.role.replace("_", " ")}
                         </span>
-                        <div className="text-[10px] text-slate-400 mt-0.5">
-                          Eff: <span className="font-medium text-slate-600">{b.effective_category.replace("_", " ")}</span>
+                        <div className="text-[10px] text-[#71717A] mt-0.5">
+                          Eff: <span className="font-medium text-[#A78BFA]">{b.effective_category.replace("_", " ")}</span>
                         </div>
                       </td>
 
-                      <td className="px-6 py-4 text-right whitespace-nowrap font-mono font-medium text-slate-800">
-                        {b.attendance} <span className="text-xs text-slate-400 font-sans">({b.duration_periods}p)</span>
+                      <td className="px-6 py-4 text-right whitespace-nowrap font-mono font-medium text-[#F4F2FA]">
+                        {b.attendance} <span className="text-xs text-[#71717A] font-sans">({b.duration_periods}p)</span>
                       </td>
 
                       <td className="px-6 py-4">
@@ -414,14 +416,14 @@ export function VenuesManagementView() {
                           {b.windows.map((w, idx) => (
                             <span
                               key={idx}
-                              className="inline-block rounded bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-600"
+                              className="inline-block rounded bg-[#202027] border border-[#30303A] px-1.5 py-0.5 text-xs font-mono text-[#A1A1AA]"
                             >
                               {w.day} P{w.from_period}-P{w.to_period}
                             </span>
                           ))}
                         </div>
                         {b.requested_room && (
-                          <div className="text-[10px] text-blue-600 mt-0.5">
+                          <div className="text-[10px] text-[#A78BFA] mt-0.5">
                             Pref: <span className="font-mono font-semibold">{b.requested_room}</span>
                           </div>
                         )}
@@ -430,31 +432,31 @@ export function VenuesManagementView() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           {isApproved && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
-                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 text-xs font-semibold text-[#34D399]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#34D399]" />
                               Approved
                             </span>
                           )}
                           {isAlt && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
-                              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-950/60 border border-amber-800/40 px-2.5 py-0.5 text-xs font-semibold text-[#FBBF24]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#FBBF24]" />
                               Alternative
                             </span>
                           )}
                           {isRejected && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 border border-slate-200">
-                              <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#292933] border border-[#30303A] px-2.5 py-0.5 text-xs font-semibold text-[#71717A]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#71717A]" />
                               Rejected
                             </span>
                           )}
 
                           {dec?.room_id && (
-                            <span className="font-mono text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
+                            <span className="font-mono text-xs font-bold text-[#F4F2FA] bg-[#202027] border border-[#30303A] px-2 py-0.5 rounded">
                               {dec.room_id} ({dec.day} P{dec.start_period}-P{dec.end_period})
                             </span>
                           )}
                         </div>
-                        <div className="mt-1 text-xs text-slate-500 max-w-xs truncate" title={dec?.reason}>
+                        <div className="mt-1 text-xs text-[#71717A] max-w-xs truncate" title={dec?.reason}>
                           {dec?.reason}
                         </div>
                       </td>
@@ -465,7 +467,7 @@ export function VenuesManagementView() {
                             e.stopPropagation();
                             handleInspect(b);
                           }}
-                          className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition"
+                          className="rounded-lg bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 px-3 py-1.5 text-xs font-semibold text-[#A78BFA] hover:bg-[#8B5CF6]/35 transition cursor-pointer"
                         >
                           Inspect
                         </button>
@@ -481,26 +483,26 @@ export function VenuesManagementView() {
 
       {/* Detail / Inspection Modal Drawer */}
       {selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto space-y-5">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-[#30303A] bg-[#19191F] p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5 text-[#F4F2FA]">
+            <div className="flex items-start justify-between border-b border-[#30303A] pb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-blue-600 uppercase">
+                  <span className="font-mono text-xs font-bold text-[#A78BFA] uppercase">
                     {selectedRequest.id}
                   </span>
-                  <span className="text-xs text-slate-400">|</span>
-                  <span className="text-xs text-slate-600 capitalize">
+                  <span className="text-xs text-[#71717A]">|</span>
+                  <span className="text-xs text-[#A1A1AA] capitalize">
                     {selectedRequest.role.replace("_", " ")}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mt-1">{selectedRequest.title}</h3>
-                <div className="text-xs text-slate-500">Requester: {selectedRequest.requester}</div>
+                <h3 className="text-lg font-bold text-[#F4F2FA] mt-1">{selectedRequest.title}</h3>
+                <div className="text-xs text-[#71717A]">Requester: {selectedRequest.requester}</div>
               </div>
 
               <button
                 onClick={() => setSelectedRequest(null)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-lg p-1.5 text-[#71717A] hover:bg-[#292933] hover:text-[#F4F2FA] transition-colors cursor-pointer"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -509,86 +511,86 @@ export function VenuesManagementView() {
             </div>
 
             {actionError && (
-              <div className="rounded-lg bg-red-50 p-3 text-xs text-red-700 border border-red-200">
+              <div className="rounded-lg bg-rose-950/40 p-3 text-xs text-[#FB7185] border border-rose-800/50">
                 {actionError}
               </div>
             )}
             {actionSuccess && (
-              <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-700 border border-emerald-200">
+              <div className="rounded-lg bg-emerald-950/40 p-3 text-xs text-[#34D399] border border-emerald-800/50">
                 {actionSuccess}
               </div>
             )}
 
             {/* Original Request Raw Text */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <div className="text-xs font-semibold uppercase text-slate-500 mb-1">
+            <div className="rounded-xl border border-[#30303A] bg-[#141419] p-4">
+              <div className="text-xs font-semibold uppercase text-[#71717A] mb-1">
                 Original Request (raw_text for AI parser)
               </div>
-              <p className="text-xs text-slate-700 italic font-mono bg-white p-2.5 rounded-lg border border-slate-200/60">
+              <p className="text-xs text-[#A1A1AA] italic font-mono bg-[#19191F] p-2.5 rounded-lg border border-[#30303A]">
                 &quot;{selectedRequest.raw_text}&quot;
               </p>
             </div>
 
             {/* Structured Request Metadata */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <div className="text-slate-400">Attendance</div>
-                <div className="font-bold text-slate-800 text-sm mt-0.5">{selectedRequest.attendance} people</div>
+              <div className="rounded-lg bg-[#202027] p-3 border border-[#30303A]">
+                <div className="text-[#71717A]">Attendance</div>
+                <div className="font-bold text-[#F4F2FA] text-sm mt-0.5">{selectedRequest.attendance} people</div>
               </div>
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <div className="text-slate-400">Duration</div>
-                <div className="font-bold text-slate-800 text-sm mt-0.5">{selectedRequest.duration_periods} periods</div>
+              <div className="rounded-lg bg-[#202027] p-3 border border-[#30303A]">
+                <div className="text-[#71717A]">Duration</div>
+                <div className="font-bold text-[#F4F2FA] text-sm mt-0.5">{selectedRequest.duration_periods} periods</div>
               </div>
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <div className="text-slate-400">Effective Category</div>
-                <div className="font-bold text-blue-700 text-sm mt-0.5">{selectedRequest.effective_category}</div>
+              <div className="rounded-lg bg-[#202027] p-3 border border-[#30303A]">
+                <div className="text-[#71717A]">Effective Category</div>
+                <div className="font-bold text-[#A78BFA] text-sm mt-0.5">{selectedRequest.effective_category}</div>
               </div>
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <div className="text-slate-400">Preferred Venue</div>
-                <div className="font-bold text-slate-800 text-sm mt-0.5">{selectedRequest.requested_room || "None"}</div>
+              <div className="rounded-lg bg-[#202027] p-3 border border-[#30303A]">
+                <div className="text-[#71717A]">Preferred Venue</div>
+                <div className="font-bold text-[#F4F2FA] text-sm mt-0.5">{selectedRequest.requested_room || "None"}</div>
               </div>
             </div>
 
             {/* Current Decision Summary */}
-            <div className="rounded-xl border border-slate-200 p-4">
-              <div className="text-xs font-semibold uppercase text-slate-500 mb-2">Current Allocation Decision</div>
+            <div className="rounded-xl border border-[#30303A] bg-[#202027] p-4">
+              <div className="text-xs font-semibold uppercase text-[#71717A] mb-2">Current Allocation Decision</div>
               <div className="flex items-center gap-2">
-                <span className="font-mono font-bold text-xs uppercase px-2 py-0.5 rounded bg-slate-100">
+                <span className="font-mono font-bold text-xs uppercase px-2 py-0.5 rounded bg-[#141419] border border-[#30303A] text-[#F4F2FA]">
                   {selectedRequest.decision?.status || "None"}
                 </span>
                 {selectedRequest.decision?.room_id && (
-                  <span className="font-mono text-xs font-semibold text-slate-800">
+                  <span className="font-mono text-xs font-semibold text-[#A78BFA]">
                     {selectedRequest.decision.room_id} on {selectedRequest.decision.day} P{selectedRequest.decision.start_period}-P{selectedRequest.decision.end_period}
                   </span>
                 )}
               </div>
-              <p className="mt-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-100">
+              <p className="mt-2 text-xs text-[#A1A1AA] bg-[#19191F] p-2.5 rounded border border-[#30303A]">
                 {selectedRequest.decision?.reason}
               </p>
             </div>
 
             {/* Evaluation Results */}
             {evalResult && (
-              <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-3">
-                <div className="text-xs font-bold text-blue-900 uppercase">Live Feasibility Evaluation</div>
-                <div className="text-xs text-slate-700">
+              <div className="rounded-xl border border-[#8B5CF6]/40 bg-[#8B5CF6]/10 p-4 space-y-3">
+                <div className="text-xs font-bold text-[#A78BFA] uppercase">Live Feasibility Evaluation</div>
+                <div className="text-xs text-[#F4F2FA]">
                   Compatible Venues:{" "}
-                  <span className="font-mono font-semibold">{evalResult.compatible_rooms.join(", ") || "None"}</span>
+                  <span className="font-mono font-semibold text-[#34D399]">{evalResult.compatible_rooms.join(", ") || "None"}</span>
                 </div>
-                <div className="text-xs text-slate-700">
+                <div className="text-xs text-[#F4F2FA]">
                   Available Slots Inside Windows:{" "}
-                  <span className="font-mono font-semibold">{evalResult.available_slots_inside_windows.length}</span>
+                  <span className="font-mono font-semibold text-[#34D399]">{evalResult.available_slots_inside_windows.length}</span>
                 </div>
                 {evalResult.suggested_alternative && (
-                  <div className="text-xs text-amber-800 bg-amber-50 p-2 rounded border border-amber-200 font-mono">
+                  <div className="text-xs text-amber-300 bg-amber-950/60 p-2 rounded border border-amber-800/50 font-mono">
                     Alternative: {evalResult.suggested_alternative.room_id} {evalResult.suggested_alternative.day} P{evalResult.suggested_alternative.start_period}-P{evalResult.suggested_alternative.end_period}
                   </div>
                 )}
                 {evalResult.conflicts.length > 0 && (
-                  <div className="text-xs text-slate-600">
-                    <span className="font-semibold text-red-600">Conflicts noted:</span>
+                  <div className="text-xs text-[#A1A1AA]">
+                    <span className="font-semibold text-[#FB7185]">Conflicts noted:</span>
                     <ul className="list-disc list-inside mt-1 space-y-0.5 text-[11px]">
-                      {evalResult.conflicts.slice(0, 3).map((c, i) => (
+                      {evalResult.conflicts.slice(0, 3).map((c: string, i: number) => (
                         <li key={i}>{c}</li>
                       ))}
                     </ul>
@@ -598,11 +600,11 @@ export function VenuesManagementView() {
             )}
 
             {/* Actions */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#30303A]">
               <button
                 onClick={handleEvaluateLive}
                 disabled={isEvaluating}
-                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                className="rounded-xl border border-[#30303A] bg-[#202027] px-4 py-2 text-xs font-semibold text-[#F4F2FA] hover:bg-[#292933] hover:border-[#8B5CF6]/50 transition cursor-pointer"
               >
                 {isEvaluating ? "Evaluating..." : "Check Venue Compatibility"}
               </button>
@@ -610,14 +612,14 @@ export function VenuesManagementView() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleRecordDecision("rejected")}
-                  className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 transition"
+                  className="rounded-xl border border-rose-800/50 bg-rose-950/40 px-4 py-2 text-xs font-semibold text-[#FB7185] hover:bg-rose-900/60 transition cursor-pointer"
                 >
                   Reject Request
                 </button>
                 {!selectedRequest.is_cancelled && (
                   <button
                     onClick={() => handleRecordDecision("approved")}
-                    className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition"
+                    className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-emerald-600/20 transition cursor-pointer"
                   >
                     Confirm Approval
                   </button>
@@ -630,4 +632,3 @@ export function VenuesManagementView() {
     </div>
   );
 }
-

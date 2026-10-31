@@ -34,7 +34,7 @@ const NAV_ITEMS: NavItem[] = [
     id: "timetable",
     label: "Timetable",
     isComingSoon: false,
-    badge: "M02 (Ready)",
+    badge: "M02",
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -45,7 +45,7 @@ const NAV_ITEMS: NavItem[] = [
     id: "examinations",
     label: "Examinations",
     isComingSoon: false,
-    badge: "M03 (Ready)",
+    badge: "M03",
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -56,7 +56,7 @@ const NAV_ITEMS: NavItem[] = [
     id: "venues",
     label: "Venue Bookings",
     isComingSoon: false,
-    badge: "M04 (Ready)",
+    badge: "M04",
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -67,7 +67,7 @@ const NAV_ITEMS: NavItem[] = [
     id: "rescheduling",
     label: "Rescheduling",
     isComingSoon: false,
-    badge: "M05 (Ready)",
+    badge: "M05",
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -78,7 +78,7 @@ const NAV_ITEMS: NavItem[] = [
     id: "ai",
     label: "AI Assistant",
     isComingSoon: false,
-    badge: "M06 (Ready)",
+    badge: "M06",
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -118,35 +118,36 @@ export function Sidebar({
       {mobileOpen && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm lg:hidden transition-opacity"
         />
       )}
 
       {/* Sidebar container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-slate-900 text-slate-200 transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-[#141419] text-[#F4F2FA] transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
-        } shadow-xl lg:shadow-none border-r border-slate-800`}
+        } shadow-2xl lg:shadow-none border-r border-[#30303A]`}
       >
         {/* Brand Header */}
-        <div className="flex h-20 items-center justify-between border-b border-slate-800/80 px-6">
+        <div className="flex h-20 items-center justify-between border-b border-[#30303A] px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-emerald-500 font-bold text-white shadow-md shadow-blue-500/20">
-              <span className="text-xl tracking-tight">CIT</span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#8B5CF6] via-[#7C3AED] to-[#4F46E5] font-bold text-white shadow-lg shadow-[#8B5CF6]/20 border border-[#A78BFA]/30">
+              <span className="text-lg tracking-tight font-black">CIT</span>
             </div>
             <div>
-              <div className="text-base font-semibold leading-tight text-white tracking-tight">
-                Chilika Institute
+              <div className="text-sm font-bold leading-tight text-[#F4F2FA] tracking-tight flex items-center gap-1.5">
+                <span>CIT CAMPUS OS</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#A78BFA]" />
               </div>
-              <div className="text-xs font-medium text-slate-400">
-                Campus Scheduling
+              <div className="text-[11px] font-medium text-[#71717A]">
+                Chilika Institute of Tech
               </div>
             </div>
           </div>
           {/* Mobile close button */}
           <button
             onClick={onCloseMobile}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden"
+            className="rounded-lg p-1.5 text-[#71717A] hover:bg-[#292933] hover:text-[#F4F2FA] lg:hidden cursor-pointer"
             aria-label="Close sidebar"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -155,12 +156,12 @@ export function Sidebar({
           </button>
         </div>
 
-        {/* Administration Navigation */}
+        {/* Navigation Modules */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
-          <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#71717A]">
             Navigation Modules
           </div>
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             {NAV_ITEMS.map((item) => {
               const isActive = activeTab === item.id;
               const Icon = item.icon;
@@ -171,18 +172,18 @@ export function Sidebar({
                     onSelectTab(item.id);
                     onCloseMobile();
                   }}
-                  className={`group flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                  className={`group flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all cursor-pointer ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                      : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                      ? "bg-[#8B5CF6]/20 text-[#A78BFA] border border-[#8B5CF6]/40 font-semibold shadow-sm shadow-[#8B5CF6]/10"
+                      : "text-[#A1A1AA] hover:bg-[#292933] hover:text-[#F4F2FA] border border-transparent"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
-                      className={`h-5 w-5 transition-colors ${
+                      className={`h-4.5 w-4.5 transition-colors ${
                         isActive
-                          ? "text-white"
-                          : "text-slate-400 group-hover:text-blue-400"
+                          ? "text-[#A78BFA]"
+                          : "text-[#71717A] group-hover:text-[#A78BFA]"
                       }`}
                     />
                     <span>{item.label}</span>
@@ -191,8 +192,8 @@ export function Sidebar({
                     <span
                       className={`rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors ${
                         isActive
-                          ? "bg-blue-700/80 text-blue-100"
-                          : "bg-slate-800 text-slate-400 group-hover:text-slate-300"
+                          ? "bg-[#8B5CF6]/30 text-[#A78BFA] border border-[#8B5CF6]/40"
+                          : "bg-[#202027] text-[#71717A] border border-[#30303A] group-hover:text-[#A1A1AA] group-hover:border-[#30303A]"
                       }`}
                     >
                       {item.badge}
@@ -203,26 +204,26 @@ export function Sidebar({
             })}
           </nav>
 
-          {/* Quick Notice Card */}
-          <div className="mt-8 rounded-xl border border-slate-800 bg-slate-800/40 p-3.5 text-xs text-slate-400">
-            <div className="flex items-center gap-2 font-semibold text-slate-200">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Milestone 01 Active</span>
+          {/* Quick Platform Notice Card */}
+          <div className="mt-8 rounded-xl border border-[#30303A] bg-[#19191F] p-3.5 text-xs text-[#A1A1AA]">
+            <div className="flex items-center gap-2 font-semibold text-[#F4F2FA]">
+              <span className="flex h-2 w-2 rounded-full bg-[#34D399] animate-pulse" />
+              <span className="text-[11px] tracking-tight">Obsidian Lavender Engine</span>
             </div>
-            <p className="mt-1 leading-relaxed text-[11px] text-slate-400">
-              CIT Public Dataset v1 loaded dynamically from FastAPI. All metrics reflect live source records.
+            <p className="mt-1 leading-relaxed text-[11px] text-[#71717A]">
+              Live constraint solvers &amp; validation rules active across all 6 campus milestones.
             </p>
           </div>
         </div>
 
         {/* Sidebar Footer */}
-        <div className="border-t border-slate-800/80 p-4">
-          <div className="flex flex-col gap-1 rounded-lg bg-slate-950/60 p-3 text-xs">
-            <div className="flex items-center justify-between text-slate-400">
-              <span>Target Backend</span>
-              <span className="font-mono text-[10px] text-emerald-400">FastAPI</span>
+        <div className="border-t border-[#30303A] p-4">
+          <div className="flex flex-col gap-1 rounded-xl bg-[#101014] border border-[#30303A] p-3 text-xs">
+            <div className="flex items-center justify-between text-[#71717A]">
+              <span className="text-[10px] uppercase tracking-wider font-semibold">Backend Link</span>
+              <span className="font-mono text-[10px] font-bold text-[#34D399] bg-[#34D399]/10 px-1.5 py-0.2 rounded border border-[#34D399]/20">FastAPI</span>
             </div>
-            <div className="truncate font-mono text-[11px] text-slate-300">
+            <div className="truncate font-mono text-[11px] text-[#A1A1AA] mt-0.5">
               {API_BASE}
             </div>
           </div>
@@ -231,4 +232,3 @@ export function Sidebar({
     </>
   );
 }
-
