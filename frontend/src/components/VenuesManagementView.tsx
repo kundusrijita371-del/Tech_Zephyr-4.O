@@ -13,9 +13,16 @@ import type {
   BookingValidationReport,
   EvaluateBookingResponse,
   BookingStatus,
+  User,
 } from "@/lib/types";
 
-export function VenuesManagementView() {
+interface VenuesManagementViewProps {
+  currentUser?: User | null;
+}
+
+export function VenuesManagementView({ currentUser }: VenuesManagementViewProps = {}) {
+  const isAdmin = currentUser?.role === "admin";
+  const isClub = currentUser?.role === "club_representative";
   const [bookings, setBookings] = useState<BookingRequestItem[]>([]);
   const [validation, setValidation] = useState<BookingValidationReport | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -162,30 +169,43 @@ export function VenuesManagementView() {
             </span>
           </div>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#F4F2FA]">
-            Spectra Fest Venue Manager (Week 7)
+            {isClub
+              ? "My Bookings (Spectra Festival Week)"
+              : currentUser?.role === "department_coordinator"
+              ? "Department Bookings & Allocations"
+              : currentUser?.role === "faculty"
+              ? "Guest Lecture Venue Bookings"
+              : "Spectra Fest Venue Manager (Week 7)"}
           </h2>
           <p className="mt-1 text-sm text-[#A1A1AA] max-w-2xl leading-relaxed">
-            Processes all 25 booking requests in strict priority order. Enforces role category caps, submission timestamp tie-breakers, venue features &amp; accessibility, and guarantees zero priority inversions.
+            {isClub
+              ? "Track allocated venues, pre-emptions, and decision statuses for all Spectra Festival event submissions."
+              : currentUser?.role === "department_coordinator"
+              ? "Departmental bookings, seminar halls, and laboratory venue requests."
+              : currentUser?.role === "faculty"
+              ? "Seminar hall requests for academic colloquiums and visiting guest lectures."
+              : "Processes all 25 booking requests in strict priority order. Enforces role category caps, submission timestamp tie-breakers, venue features & accessibility, and guarantees zero priority inversions."}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleGenerate}
-            disabled={isAllocating}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition cursor-pointer"
-          >
-            {isAllocating ? (
-              <>
-                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-                Allocating Venues...
-              </>
-            ) : (
-              <>
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {isAdmin && (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleGenerate}
+              disabled={isAllocating}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition cursor-pointer"
+            >
+              {isAllocating ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Allocating Venues...
+                </>
+              ) : (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 Run Priority Allocation
@@ -193,6 +213,7 @@ export function VenuesManagementView() {
             )}
           </button>
         </div>
+        )}
       </div>
 
       {error && (

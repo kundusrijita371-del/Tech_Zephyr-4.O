@@ -47,6 +47,15 @@ def get_current_user(
     return user
 
 
+def get_current_user_optional(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)] = None,
+) -> UserResponse | None:
+    """Dependency that extracts user if Bearer token is provided, or returns None if omitted."""
+    if not credentials or not credentials.credentials:
+        return None
+    return AuthService.get_user_by_token(credentials.credentials)
+
+
 @router.post(
     "/login",
     response_model=TokenResponse,

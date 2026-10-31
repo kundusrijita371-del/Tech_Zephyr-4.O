@@ -13,11 +13,17 @@ import type {
   TimetableValidationResponse,
   Room,
   StudentGroup,
+  User,
 } from "@/lib/types";
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI"] as const;
 
-export function TimetableManagementView() {
+interface TimetableManagementViewProps {
+  currentUser?: User | null;
+}
+
+export function TimetableManagementView({ currentUser }: TimetableManagementViewProps = {}) {
+  const isAdmin = currentUser?.role === "admin";
   const [timetable, setTimetable] = useState<TimetableResponse | null>(null);
   const [validation, setValidation] = useState<TimetableValidationResponse | null>(null);
   const [, setRooms] = useState<Room[]>([]);
@@ -100,36 +106,46 @@ export function TimetableManagementView() {
             </span>
           </div>
           <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-[#F4F2FA]">
-            University Timetable Generator
+            {currentUser?.role === "department_coordinator"
+              ? "CSE Department Timetable"
+              : currentUser?.role === "faculty"
+              ? "Faculty Teaching Timetable"
+              : "University Timetable Generator"}
           </h2>
           <p className="mt-1 text-xs text-[#A1A1AA] max-w-xl leading-relaxed">
-            Schedules all 189 teaching sessions into Mon–Fri teaching periods (P1–P9) across 27 campus rooms with 0 hard conflicts guaranteed.
+            {currentUser?.role === "department_coordinator"
+              ? "Departmental teaching sessions for CSE student groups (CSE-1, CSE-2, CSE-3) across Mon–Fri periods."
+              : currentUser?.role === "faculty"
+              ? "Teaching sessions schedule adhering to the 4 hours per day max workload hard constraint."
+              : "Schedules all 189 teaching sessions into Mon–Fri teaching periods (P1–P9) across 27 campus rooms with 0 hard conflicts guaranteed."}
           </p>
         </div>
 
-        <button
-          onClick={handleGenerate}
-          disabled={isSolving}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition-all cursor-pointer shrink-0"
-        >
-          {isSolving ? (
-            <>
-              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
-              <span>Solving with CP-SAT...</span>
-            </>
-          ) : (
-            <>
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{timetable ? "Regenerate Timetable" : "Generate Timetable"}</span>
-            </>
-          )}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={handleGenerate}
+            disabled={isSolving}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-[#8B5CF6]/20 active:scale-95 disabled:opacity-50 transition-all cursor-pointer shrink-0"
+          >
+            {isSolving ? (
+              <>
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                <span>Solving with CP-SAT...</span>
+              </>
+            ) : (
+              <>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{timetable ? "Regenerate Timetable" : "Generate Timetable"}</span>
+              </>
+            )}
+          </button>
+        )}
       </div>
 
       {error && (

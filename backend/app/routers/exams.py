@@ -5,13 +5,16 @@ Mounted under /api/v1/exams.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.models.exam import (
     ExamResponse,
     ExamValidationResponse,
     GenerateExamRequest,
 )
+from app.models.user import UserResponse, UserRole
+from app.routers.auth import get_current_user_optional
 from app.services.exam_service import ExamService
 
 router = APIRouter(prefix="/exams", tags=["exams"])
@@ -24,14 +27,18 @@ router = APIRouter(prefix="/exams", tags=["exams"])
 )
 def generate_exams(
     request: GenerateExamRequest | None = None,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
 ) -> ExamResponse:
-    """Run the CP-SAT engine to schedule all 41 midsem examinations without hard clashes.
+    """Run the CP-SAT engine to schedule all midsem examinations without hard clashes.
 
-    Satisfies:
-    - 50% room capacity rule (multi-room allocations).
-    - No room or student group double bookings.
-    - Soft minimization of multiple exams per group on the same day.
+    Restricted to Campus Administrators.
     """
+    if current_user and current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Midsem examination hall scheduling requires administrative privileges.",
+        )
+
     req = request or GenerateExamRequest()
     response = ExamService.generate(req)
 

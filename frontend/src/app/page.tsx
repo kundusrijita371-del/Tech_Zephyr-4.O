@@ -15,6 +15,14 @@ import { VenuesManagementView } from "@/components/VenuesManagementView";
 import { ReschedulingManagementView } from "@/components/ReschedulingManagementView";
 import { AIAssistantView } from "@/components/AIAssistantView";
 import { SettingsManagementView } from "@/components/SettingsManagementView";
+import { AnalyticsView } from "@/components/AnalyticsView";
+import { UserManagementView } from "@/components/UserManagementView";
+import { CoordinatorFacultyGroupsView } from "@/components/CoordinatorFacultyGroupsView";
+import { FacultyAvailabilityView } from "@/components/FacultyAvailabilityView";
+import { ClubNewVenueRequestView } from "@/components/ClubNewVenueRequestView";
+import { ClubBookingStatusView } from "@/components/ClubBookingStatusView";
+import { UnauthorizedView } from "@/components/UnauthorizedView";
+import { isTabAuthorizedForRole, getNavItemsForRole } from "@/lib/navigation";
 import { LoginModal } from "@/components/LoginModal";
 
 export default function DashboardPage() {
@@ -57,6 +65,7 @@ export default function DashboardPage() {
   const handleLoginSuccess = (user: User, token: string) => {
     setCurrentUser(user);
     setAuthToken(token);
+    setActiveTab("overview");
   };
 
   const handleLogout = async () => {
@@ -66,6 +75,7 @@ export default function DashboardPage() {
     clearStoredAuth();
     setCurrentUser(null);
     setAuthToken(null);
+    setActiveTab("overview");
   };
 
   const fetchSummary = useCallback(async (isManualRefresh = false) => {
@@ -99,25 +109,21 @@ export default function DashboardPage() {
     fetchSummary();
   }, [fetchSummary]);
 
+  // Calculate tab label dynamically based on active role
+  const currentNavItems = getNavItemsForRole(currentUser?.role);
+  const activeTabItem = currentNavItems.find((item) => item.id === activeTab);
   const activeTabLabel =
-    activeTab === "overview"
-      ? "Overview"
-      : activeTab === "timetable"
-      ? "Timetable"
-      : activeTab === "examinations"
-      ? "Examinations"
-      : activeTab === "venues"
-      ? "Venue Bookings"
-      : activeTab === "rescheduling"
-      ? "Rescheduling"
-      : activeTab === "ai"
-      ? "AI Assistant"
-      : "Settings";
+    activeTabItem?.label ||
+    (activeTab.charAt(0).toUpperCase() + activeTab.slice(1));
+
+  // Role authorization guard
+  const isAuthorized = isTabAuthorizedForRole(activeTab, currentUser?.role);
 
   return (
     <div className="flex min-h-screen bg-[#101014] font-sans text-[#F4F2FA] antialiased">
-      {/* Obsidian Lavender Dark Sidebar */}
+      {/* Obsidian Lavender Dark Sidebar with Role-Specific Navigation */}
       <Sidebar
+        currentUser={currentUser}
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         mobileOpen={mobileOpen}
@@ -139,14 +145,21 @@ export default function DashboardPage() {
         />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
-          {activeTab === "timetable" ? (
-            <TimetableManagementView />
+          {!isAuthorized ? (
+            <UnauthorizedView
+              attemptedTab={activeTab}
+              currentUser={currentUser}
+              onReturnDashboard={() => setActiveTab("overview")}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
+            />
+          ) : activeTab === "timetable" ? (
+            <TimetableManagementView currentUser={currentUser} />
           ) : activeTab === "examinations" ? (
             <ExaminationsManagementView />
           ) : activeTab === "venues" ? (
-            <VenuesManagementView />
+            <VenuesManagementView currentUser={currentUser} />
           ) : activeTab === "rescheduling" ? (
-            <ReschedulingManagementView />
+            <ReschedulingManagementView currentUser={currentUser} />
           ) : activeTab === "ai" ? (
             <AIAssistantView authenticatedRole={currentUser?.role} />
           ) : activeTab === "settings" ? (
@@ -156,6 +169,21 @@ export default function DashboardPage() {
               onLogout={handleLogout}
               onNavigateTab={(tab) => setActiveTab(tab as NavTabId)}
             />
+          ) : activeTab === "analytics" ? (
+            <AnalyticsView />
+          ) : activeTab === "users" ? (
+            <UserManagementView
+              currentUser={currentUser}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
+            />
+          ) : activeTab === "faculty_groups" ? (
+            <CoordinatorFacultyGroupsView />
+          ) : activeTab === "availability" ? (
+            <FacultyAvailabilityView />
+          ) : activeTab === "venue_request" ? (
+            <ClubNewVenueRequestView />
+          ) : activeTab === "booking_status" ? (
+            <ClubBookingStatusView />
           ) : activeTab !== "overview" ? (
             <ComingSoonView
               tabId={activeTab}

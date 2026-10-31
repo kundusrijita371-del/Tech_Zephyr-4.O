@@ -7,6 +7,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, status
 
+from typing import Annotated, Any
+from fastapi import APIRouter, Depends, HTTPException, status
+
 from app.models.disruption import DisruptionRequest
 from app.models.rescheduling import (
     ImpactReport,
@@ -14,6 +17,8 @@ from app.models.rescheduling import (
     RepairProposal,
     ScheduleVersionRecord,
 )
+from app.models.user import UserResponse, UserRole
+from app.routers.auth import get_current_user_optional
 from app.services.rescheduling_service import ReschedulingService
 
 router = APIRouter(prefix="/rescheduling", tags=["rescheduling"])
@@ -84,9 +89,27 @@ def get_proposal_details(proposal_id: str) -> RepairProposal:
     summary="Approve and atomically commit a validated proposal",
 )
 def approve_proposal(
-    proposal_id: str, decision: ProposalDecisionRequest
+    proposal_id: str,
+    decision: ProposalDecisionRequest,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
 ) -> ScheduleVersionRecord:
     """Commit a pending repair proposal. Verifies schedule integrity and archives previous version."""
+    if current_user:
+        if current_user.role not in (UserRole.ADMIN, UserRole.DEPARTMENT_COORDINATOR):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Forbidden: Only Campus Administrators and Department Coordinators can approve schedule rescheduling proposals.",
+            )
+        # Prevent self-approval if coordinator requested the disruption
+        proposal = ReschedulingService.get_proposal(proposal_id)
+        if proposal and current_user.role != UserRole.ADMIN:
+            # Check if current user is the requester
+            if hasattr(proposal, "disruption") and getattr(proposal.disruption, "reported_by", None) == current_user.email:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Forbidden: Self-approval is strictly prohibited. An administrator must approve your proposal.",
+                )
+
     try:
         return ReschedulingService.approve_proposal(proposal_id, decision)
     except ValueError as exc:
@@ -108,9 +131,18 @@ def approve_proposal(
     summary="Reject a pending proposal without changing the active schedule",
 )
 def reject_proposal(
-    proposal_id: str, decision: ProposalDecisionRequest
+    proposal_id: str,
+    decision: ProposalDecisionRequest,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
 ) -> RepairProposal:
     """Reject a repair proposal. Keeps the active schedule completely untouched."""
+    if current_user:
+        if current_user.role not in (UserRole.ADMIN, UserRole.DEPARTMENT_COORDINATOR):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Forbidden: Only Campus Administrators and Department Coordinators can reject schedule rescheduling proposals.",
+            )
+
     try:
         return ReschedulingService.reject_proposal(proposal_id, decision)
     except ValueError as exc:

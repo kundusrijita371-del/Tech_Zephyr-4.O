@@ -234,3 +234,4 @@ def get_audit_log(
 ) -> list[dict[str, Any]]:
     """Retrieve audit log entries tracking priority updates, resets, and dataset replacements."""
     return SettingsService.get_audit_log(limit=limit)
+

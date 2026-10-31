@@ -8,15 +8,29 @@ interface ComingSoonViewProps {
   onBackToOverview: () => void;
 }
 
-const TAB_METADATA: Record<
-  Exclude<NavTabId, "overview">,
-  {
-    title: string;
-    milestone: string;
-    description: string;
-    expectedDeliverables: string[];
-    technicalStack: string[];
-  }
+const DEFAULT_METADATA = {
+  title: "CIT Campus OS Module",
+  milestone: "Platform Module",
+  description: "Operational management capability within CIT Campus OS.",
+  expectedDeliverables: [
+    "Role-based permission enforcement",
+    "Real-time state synchronization",
+    "Official validator compliance",
+  ],
+  technicalStack: ["FastAPI", "Next.js", "TypeScript"],
+};
+
+const TAB_METADATA: Partial<
+  Record<
+    Exclude<NavTabId, "overview">,
+    {
+      title: string;
+      milestone: string;
+      description: string;
+      expectedDeliverables: string[];
+      technicalStack: string[];
+    }
+  >
 > = {
   timetable: {
     title: "Timetable Scheduling Engine",
@@ -97,7 +111,7 @@ const TAB_METADATA: Record<
 export function ComingSoonView({ tabId, onBackToOverview }: ComingSoonViewProps) {
   if (tabId === "overview") return null;
 
-  const info = TAB_METADATA[tabId];
+  const info = TAB_METADATA[tabId] || DEFAULT_METADATA;
 
   return (
     <div className="mx-auto max-w-4xl py-6 space-y-6">

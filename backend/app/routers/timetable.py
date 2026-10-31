@@ -5,13 +5,16 @@ Mounted under /api/v1/timetable.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.models.timetable import (
     GenerateTimetableRequest,
     TimetableResponse,
     TimetableValidationResponse,
 )
+from app.models.user import UserResponse, UserRole
+from app.routers.auth import get_current_user_optional
 from app.services.timetable_service import TimetableService
 
 router = APIRouter(prefix="/timetable", tags=["timetable"])
@@ -24,11 +27,19 @@ router = APIRouter(prefix="/timetable", tags=["timetable"])
 )
 def generate_timetable(
     request: GenerateTimetableRequest | None = None,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
 ) -> TimetableResponse:
     """Run the CP-SAT engine to schedule all 189 teaching sessions without hard clashes.
 
     Persists the result to exports/timetable_draft.json and caches it in memory.
+    Restricted to Campus Administrators and Department Coordinators.
     """
+    if current_user and current_user.role not in (UserRole.ADMIN, UserRole.DEPARTMENT_COORDINATOR):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Timetable generation requires administrative or departmental coordinator privileges.",
+        )
+
     req = request or GenerateTimetableRequest()
     response = TimetableService.generate(req)
 

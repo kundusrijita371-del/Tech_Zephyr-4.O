@@ -5,8 +5,8 @@ Mounted under /api/v1/bookings.
 
 from __future__ import annotations
 
-from typing import Any
-from fastapi import APIRouter, HTTPException
+from typing import Annotated, Any
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.models.booking import (
     BookingRequestItem,
@@ -16,6 +16,8 @@ from app.models.booking import (
     FestWeekSchedule,
     ManualDecisionRequest,
 )
+from app.models.user import UserResponse, UserRole
+from app.routers.auth import get_current_user_optional
 from app.services.booking_service import BookingService
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -26,9 +28,52 @@ router = APIRouter(prefix="/bookings", tags=["bookings"])
     response_model=list[BookingRequestItem],
     summary="Get all 25 Spectra Week booking requests and current decisions",
 )
-def get_all_bookings() -> list[BookingRequestItem]:
-    """Retrieve all 25 original booking requests combined with their allocated decisions."""
-    return BookingService.get_all_requests_with_decisions()
+def get_all_bookings(
+    club: str | None = None,
+    department: str | None = None,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
+) -> list[BookingRequestItem]:
+    """Retrieve booking requests combined with their allocated decisions.
+    
+    Applies role-based filtering:
+    - Club Representatives only see booking records for their club.
+    - Department Coordinators only see department events & regular session bookings.
+    - Admin sees all campus bookings.
+    """
+    all_bookings = BookingService.get_all_requests_with_decisions()
+    
+    if current_user and current_user.role == UserRole.CLUB_REPRESENTATIVE:
+        user_club = (current_user.club or "Spectra").lower()
+        return [
+            b for b in all_bookings
+            if b.requested_category == "club_event"
+            or b.role == "club"
+            or (user_club in b.requester.lower())
+            or (user_club in b.title.lower())
+        ]
+
+    if current_user and current_user.role == UserRole.DEPARTMENT_COORDINATOR:
+        user_dept = current_user.department
+        if user_dept:
+            return [
+                b for b in all_bookings
+                if b.requested_category in ("department_event", "regular_session")
+                or (b.department and b.department.upper() == user_dept.upper())
+            ]
+
+    if club:
+        user_club = club.lower()
+        return [
+            b for b in all_bookings
+            if b.requested_category == "club_event"
+            or b.role == "club"
+            or (user_club in b.requester.lower())
+            or (user_club in b.title.lower())
+        ]
+    if department:
+        return [b for b in all_bookings if b.department and b.department.lower() == department.lower()]
+
+    return all_bookings
 
 
 @router.post(
@@ -36,12 +81,19 @@ def get_all_bookings() -> list[BookingRequestItem]:
     response_model=BookingValidationReport,
     summary="Run deterministic priority-aware booking allocation for all requests",
 )
-def generate_bookings() -> BookingValidationReport:
+def generate_bookings(
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
+) -> BookingValidationReport:
     """Allocate campus venues for all 25 Spectra Week requests in strict priority order.
 
-    Applies role category caps, timestamp tie-breaking, requested room preferences,
-    room capacity & accessibility, timetable & booking clash checks, and session displacement.
+    Requires administrative privileges.
     """
+    if current_user and current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Running global venue allocation solver requires administrative privileges.",
+        )
+
     _, report = BookingService.generate()
     if not report.is_valid:
         raise HTTPException(
@@ -108,8 +160,15 @@ def get_booking_by_id(request_id: str) -> BookingRequestItem:
 def record_manual_decision(
     request_id: str,
     payload: ManualDecisionRequest,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
 ) -> BookingValidationReport:
     """Record a decision for a booking request, verifying all constraints with validator.py."""
+    if current_user and current_user.role not in (UserRole.ADMIN, UserRole.DEPARTMENT_COORDINATOR):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Club representatives and faculty cannot record booking approval decisions or overrides.",
+        )
+
     try:
         report = BookingService.record_manual_decision(request_id, payload)
         if not report.is_valid:

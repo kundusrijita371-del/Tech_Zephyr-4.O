@@ -14,9 +14,15 @@ import type {
   DisruptionSeverityLevel,
   RepairProposalData,
   ScheduleVersionAuditRecord,
+  User,
 } from "@/lib/types";
 
-export function ReschedulingManagementView() {
+interface ReschedulingManagementViewProps {
+  currentUser?: User | null;
+}
+
+export function ReschedulingManagementView({ currentUser }: ReschedulingManagementViewProps = {}) {
+  const canApprove = currentUser?.role === "admin" || currentUser?.role === "department_coordinator";
   // Form State
   const [disruptionId, setDisruptionId] = useState<string>("dis-room-102");
   const [disruptionType, setDisruptionType] = useState<DisruptionCategory>("ROOM_UNAVAILABLE");
@@ -195,13 +201,23 @@ export function ReschedulingManagementView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#30303A] pb-4">
         <div>
           <h2 className="text-xl font-bold text-[#F4F2FA] tracking-tight flex items-center gap-2">
-            <span>Intelligent Disruption &amp; Timetable Repair Engine</span>
+            <span>
+              {currentUser?.role === "department_coordinator"
+                ? "Lab Booking & Disruption Approvals"
+                : currentUser?.role === "faculty"
+                ? "Session Change & Rescheduling Requests"
+                : "Intelligent Disruption & Timetable Repair Engine"}
+            </span>
             <span className="rounded-full bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 px-2.5 py-0.5 text-xs font-semibold text-[#A78BFA]">
               OR-Tools CP-SAT
             </span>
           </h2>
           <p className="mt-1 text-sm text-[#A1A1AA]">
-            Simulate outages, compute cascade blast radius, preview minimal-change repairs, and atomically commit verified schedule revisions.
+            {currentUser?.role === "department_coordinator"
+              ? "Review departmental lab venue disruptions, displacement cascades, and commit verified repairs."
+              : currentUser?.role === "faculty"
+              ? "Submit emergency leave or class rescheduling requests with CP-SAT minimal displacement preview."
+              : "Simulate outages, compute cascade blast radius, preview minimal-change repairs, and atomically commit verified schedule revisions."}
           </p>
         </div>
 
@@ -558,11 +574,11 @@ export function ReschedulingManagementView() {
                   </div>
 
                   {/* Stage B: Administrator Approval Controls */}
-                  {currentProposal.status === "pending" && (
+                  {currentProposal.status === "pending" && canApprove && (
                     <div className="rounded-xl border border-[#8B5CF6]/40 bg-[#8B5CF6]/10 p-4 space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="text-xs font-bold text-[#A78BFA] uppercase tracking-wider">
-                          Stage B: Administrator Review &amp; Atomic Schedule Commit
+                          Stage B: Review &amp; Atomic Schedule Commit
                         </div>
                         <span className="text-[11px] text-[#A78BFA] font-mono">Two-Stage Workflow</span>
                       </div>
@@ -615,6 +631,12 @@ export function ReschedulingManagementView() {
                           )}
                         </button>
                       </div>
+                    </div>
+                  )}
+
+                  {currentProposal.status === "pending" && !canApprove && (
+                    <div className="rounded-xl border border-[#30303A] bg-[#141419] p-4 text-xs text-[#71717A] text-center">
+                      This schedule repair proposal is pending administrative review. Faculty accounts cannot authorize schedule modifications.
                     </div>
                   )}
                 </div>
