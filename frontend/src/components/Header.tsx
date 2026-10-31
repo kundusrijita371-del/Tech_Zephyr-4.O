@@ -58,6 +58,22 @@ export function Header({
     }
   };
 
+  const getPortalTitle = (user: User | null) => {
+    if (!user) return "Campus Administration Dashboard";
+    switch (user.role) {
+      case "admin":
+        return "Campus Administration Dashboard";
+      case "department_coordinator":
+        return `${user.department || "Department"} Coordinator Portal`;
+      case "faculty":
+        return "Faculty Teaching & Scheduling Portal";
+      case "club_representative":
+        return `${user.club || "Spectra"} Club & Event Portal`;
+      default:
+        return "Campus Administration Dashboard";
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-[#30303A] bg-[#141419]/90 px-4 sm:px-8 backdrop-blur-md">
       {/* Left: Mobile Toggle & Breadcrumbs */}
@@ -79,7 +95,7 @@ export function Header({
             <span className="text-[#A78BFA] font-semibold">{activeTabLabel}</span>
           </div>
           <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#F4F2FA]">
-            Campus Administration Dashboard
+            {getPortalTitle(currentUser)}
           </h1>
         </div>
       </div>

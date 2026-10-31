@@ -412,6 +412,12 @@ class ResponseService:
 
         exam_res = ExamService.get_latest()
         if not exam_res or not exam_res.schedule or not exam_res.schedule.exams:
+            try:
+                exam_res = ExamService.generate()
+            except Exception:
+                pass
+
+        if not exam_res or not exam_res.schedule or not exam_res.schedule.exams:
             msg = "Exams abhi schedule nahi hue hain." if lang == "hinglish" else "No examination schedule has been generated yet."
             return AssistantChatResponse(conversation_id=conversation_id, message=msg, intent=parsed.intent.value)
 

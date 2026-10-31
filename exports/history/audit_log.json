@@ -128,5 +128,199 @@
     "soft_penalty": 143,
     "backup_file_path": "C:\\Users\\SUBHAM\\CIT-Campus-Management\\exports\\history\\schedule_v1.json",
     "reason": "Approved immediately for AV repair"
+  },
+  {
+    "action": "UPDATE_BOOKING_PRIORITY",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:33:15.328196+00:00",
+    "previous_order": [
+      "exam",
+      "regular_session",
+      "institute_event",
+      "guest_lecture",
+      "department_event",
+      "club_event"
+    ],
+    "new_order": [
+      "institute_event",
+      "exam",
+      "regular_session",
+      "department_event",
+      "guest_lecture",
+      "club_event"
+    ],
+    "reason": "Administrative priority queue order update via Settings module"
+  },
+  {
+    "action": "DEMO_DATA_RESET",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:33:28.259683+00:00",
+    "reason": "Complete judge evaluation state reset to baseline benchmark",
+    "restored_entities": [
+      "Booking priority order restored to default [exam -> regular_session -> ...]",
+      "Spectra Fest booking allocations and session overrides cleared",
+      "Disruption repair proposals and schedule version forks cleared",
+      "Timetable draft cleared",
+      "Examination hall allocation draft cleared",
+      "CIT Public Dataset v1 cache reloaded from official cit_public.json",
+      "4 Judge demo accounts verified and re-synchronized"
+    ]
+  },
+  {
+    "action": "UPDATE_BOOKING_PRIORITY",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:34:21.345915+00:00",
+    "previous_order": [
+      "exam",
+      "regular_session",
+      "institute_event",
+      "guest_lecture",
+      "department_event",
+      "club_event"
+    ],
+    "new_order": [
+      "institute_event",
+      "exam",
+      "regular_session",
+      "department_event",
+      "guest_lecture",
+      "club_event"
+    ],
+    "reason": "Administrative priority queue order update via Settings module"
+  },
+  {
+    "action": "DEMO_DATA_RESET",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:34:33.769734+00:00",
+    "reason": "Complete judge evaluation state reset to baseline benchmark",
+    "restored_entities": [
+      "Booking priority order restored to default [exam -> regular_session -> ...]",
+      "Spectra Fest booking allocations and session overrides cleared",
+      "Disruption repair proposals and schedule version forks cleared",
+      "CIT Public Dataset v1 cache reloaded from official cit_public.json",
+      "4 Judge demo accounts verified and re-synchronized"
+    ]
+  },
+  {
+    "action": "UPDATE_BOOKING_PRIORITY",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:35:21.965898+00:00",
+    "previous_order": [
+      "exam",
+      "regular_session",
+      "institute_event",
+      "guest_lecture",
+      "department_event",
+      "club_event"
+    ],
+    "new_order": [
+      "institute_event",
+      "exam",
+      "regular_session",
+      "department_event",
+      "guest_lecture",
+      "club_event"
+    ],
+    "reason": "Administrative priority queue order update via Settings module"
+  },
+  {
+    "action": "DEMO_DATA_RESET",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:35:34.099514+00:00",
+    "reason": "Complete judge evaluation state reset to baseline benchmark",
+    "restored_entities": [
+      "Booking priority order restored to default [exam -> regular_session -> ...]",
+      "Spectra Fest booking allocations and session overrides cleared",
+      "Disruption repair proposals and schedule version forks cleared",
+      "CIT Public Dataset v1 cache reloaded from official cit_public.json",
+      "4 Judge demo accounts verified and re-synchronized"
+    ]
+  },
+  {
+    "version_id": "v1",
+    "version_number": 1,
+    "disruption_id": "prop-test-approve",
+    "proposal_id": "prop-prop-test-approve-1793482868",
+    "approved_by": "SuperAdmin",
+    "timestamp": "2026-10-31T21:41:08.541351+00:00",
+    "sessions_moved_count": 0,
+    "hard_violation_count": 0,
+    "soft_penalty": 143,
+    "backup_file_path": "C:\\Users\\SUBHAM\\CIT-Campus-Management\\exports\\history\\schedule_v1.json",
+    "reason": "Approved immediately for AV repair"
+  },
+  {
+    "action": "UPDATE_BOOKING_PRIORITY",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:41:12.397934+00:00",
+    "previous_order": [
+      "exam",
+      "regular_session",
+      "institute_event",
+      "guest_lecture",
+      "department_event",
+      "club_event"
+    ],
+    "new_order": [
+      "institute_event",
+      "exam",
+      "regular_session",
+      "department_event",
+      "guest_lecture",
+      "club_event"
+    ],
+    "reason": "Administrative priority queue order update via Settings module"
+  },
+  {
+    "action": "DEMO_DATA_RESET",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:41:24.606235+00:00",
+    "reason": "Complete judge evaluation state reset to baseline benchmark",
+    "restored_entities": [
+      "Booking priority order restored to default [exam -> regular_session -> ...]",
+      "Spectra Fest booking allocations and session overrides cleared",
+      "Disruption repair proposals and schedule version forks cleared",
+      "Timetable draft cleared",
+      "Examination hall allocation draft cleared",
+      "CIT Public Dataset v1 cache reloaded from official cit_public.json",
+      "4 Judge demo accounts verified and re-synchronized"
+    ]
+  },
+  {
+    "action": "UPDATE_BOOKING_PRIORITY",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:43:43.249868+00:00",
+    "previous_order": [
+      "exam",
+      "regular_session",
+      "institute_event",
+      "guest_lecture",
+      "department_event",
+      "club_event"
+    ],
+    "new_order": [
+      "institute_event",
+      "exam",
+      "regular_session",
+      "department_event",
+      "guest_lecture",
+      "club_event"
+    ],
+    "reason": "Administrative priority queue order update via Settings module"
+  },
+  {
+    "action": "DEMO_DATA_RESET",
+    "admin": "admin@cit-demo.test",
+    "timestamp": "2026-10-31T21:43:55.443638+00:00",
+    "reason": "Complete judge evaluation state reset to baseline benchmark",
+    "restored_entities": [
+      "Booking priority order restored to default [exam -> regular_session -> ...]",
+      "Spectra Fest booking allocations and session overrides cleared",
+      "Disruption repair proposals and schedule version forks cleared",
+      "Timetable draft cleared",
+      "Examination hall allocation draft cleared",
+      "CIT Public Dataset v1 cache reloaded from official cit_public.json",
+      "4 Judge demo accounts verified and re-synchronized"
+    ]
   }
 ]

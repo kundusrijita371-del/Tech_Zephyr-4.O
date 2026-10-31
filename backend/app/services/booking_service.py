@@ -60,6 +60,14 @@ class BookingService:
     ) -> tuple[FestWeekSchedule, BookingValidationReport]:
         """Run deterministic priority-aware booking allocation for all 25 requests."""
         ds = dataset or get_dataset()
+        try:
+            from app.services.settings_service import SettingsService
+            saved_order = SettingsService.get_booking_priority()
+            if saved_order:
+                ds.priority_order = list(saved_order)
+        except Exception:
+            pass
+
         base_timetable = cls._get_base_timetable(ds)
 
         allocator = BookingAllocator(ds, base_timetable)

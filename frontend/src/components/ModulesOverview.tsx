@@ -90,6 +90,19 @@ const MODULES: ModuleInfo[] = [
       "Interactive venue, timetable, and exam queries",
     ],
   },
+  {
+    id: "settings",
+    title: "Settings & Administration",
+    milestone: "Administration",
+    status: "active",
+    description:
+      "Enterprise management: 6-stage booking priority queue reordering, official validator inspector across 4 domains, dataset uploader, and benchmark demo reset.",
+    capabilities: [
+      "Role-based access control (Admin, Coord, Faculty, Club)",
+      "Interactive 6-stage booking priority manager",
+      "Official validator inspector & demo reset",
+    ],
+  },
 ];
 
 export function ModulesOverview() {
@@ -101,11 +114,11 @@ export function ModulesOverview() {
             CIT Platform Modules Overview
           </h2>
           <p className="text-xs text-[#71717A]">
-            Production roadmap and active status across all 6 core campus management systems
+            Production roadmap and active status across all core campus management systems
           </p>
         </div>
         <span className="hidden sm:inline-flex rounded-full bg-[#19191F] border border-[#30303A] px-3 py-1 text-xs font-medium text-[#A1A1AA]">
-          6 Modules Operational
+          7 Modules Operational
         </span>
       </div>
 

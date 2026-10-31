@@ -691,6 +691,111 @@ export interface DemoAccountPublicInfo {
   dashboard_scope: string;
 }
 
+// ---------------------------------------------------------------------------
+// Settings & System Management
+// ---------------------------------------------------------------------------
+
+export interface CategoryInfo {
+  id: string;
+  name: string;
+  rank: number;
+  description: string;
+  official_role_cap: string;
+}
+
+export interface PriorityOrderResponse {
+  priority_order: string[];
+  categories: CategoryInfo[];
+  updated_at: string | null;
+  updated_by: string | null;
+  is_default: boolean;
+}
+
+export interface DatasetPreviewResponse {
+  is_valid: boolean;
+  dataset_id: string;
+  institute: string;
+  counts: Record<string, number>;
+  validation_errors: string[];
+}
+
+export interface SystemStatusResponse {
+  backend: {
+    status: string;
+    service: string;
+    version: string;
+    api_prefix: string;
+    demo_mode: boolean;
+  };
+  database: {
+    status: string;
+    type?: string;
+    path?: string;
+    registered_users?: number;
+    active_sessions?: number;
+    error?: string;
+  };
+  solver: {
+    available: boolean;
+    engine?: string;
+    version?: string;
+    status?: string;
+    error?: string;
+  };
+  ai: {
+    status: string;
+    provider: string;
+    model: string;
+    mode: string;
+  };
+  dataset: {
+    loaded: boolean;
+    dataset_id?: string;
+    institute?: string;
+    total_rooms?: number;
+    total_sessions?: number;
+    total_faculty?: number;
+    total_exams?: number;
+    total_bookings?: number;
+    file_path?: string;
+    exists_on_disk?: boolean;
+    error?: string;
+  };
+  timetable_generated: boolean;
+  exams_generated: boolean;
+  bookings_generated: boolean;
+  rescheduling_active: boolean;
+}
+
+export interface ValidatorReportsResponse {
+  timetable: Record<string, unknown> | null;
+  exams: Record<string, unknown> | null;
+  bookings: Record<string, unknown> | null;
+  disruptions: Record<string, unknown> | null;
+}
+
+export interface DemoResetResponse {
+  status: string;
+  message: string;
+  reset_timestamp: string;
+  reset_by: string;
+  restored_entities: string[];
+}
+
+export interface AuditLogEntry {
+  action: string;
+  admin?: string;
+  timestamp: string;
+  previous_order?: string[];
+  new_order?: string[];
+  reason?: string;
+  new_dataset_id?: string;
+  backup_file?: string;
+  restored_entities?: string[];
+  [key: string]: unknown;
+}
+
+
 
 
 

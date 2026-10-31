@@ -27,6 +27,13 @@ import type {
   TokenResponse,
   User,
   DemoAccountPublicInfo,
+  PriorityOrderResponse,
+  CategoryInfo,
+  DatasetPreviewResponse,
+  SystemStatusResponse,
+  ValidatorReportsResponse,
+  DemoResetResponse,
+  AuditLogEntry,
 } from "./types";
 
 
@@ -482,6 +489,141 @@ export function clearStoredAuth(): void {
   localStorage.removeItem(AUTH_TOKEN_KEY);
   localStorage.removeItem(AUTH_USER_KEY);
 }
+
+// ---------------------------------------------------------------------------
+// Settings & Administration
+// ---------------------------------------------------------------------------
+
+/** Fetch active booking priority order with category metadata. */
+export async function getBookingPriority(token?: string): Promise<PriorityOrderResponse> {
+  const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await fetch(`${V1}/settings/priority`, { headers, cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch booking priority: ${res.statusText}`);
+  }
+  return res.json();
+}
+
+/** Update the 6-stage booking priority order (Admin only). */
+export async function updateBookingPriority(
+  priorityOrder: string[],
+  token: string
+): Promise<PriorityOrderResponse> {
+  const res = await fetch(`${V1}/settings/priority`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ priority_order: priorityOrder }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errorData.detail || "Failed to update booking priority");
+  }
+  return res.json();
+}
+
+/** Retrieve live system status diagnostics across all subsystems. */
+export async function getSystemStatus(token?: string): Promise<SystemStatusResponse> {
+  const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await fetch(`${V1}/settings/system-status`, { headers, cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch system status: ${res.statusText}`);
+  }
+  return res.json();
+}
+
+/** Retrieve real validator reports across 4 domains. */
+export async function getValidatorReports(token?: string): Promise<ValidatorReportsResponse> {
+  const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await fetch(`${V1}/settings/validator-reports`, { headers, cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch validator reports: ${res.statusText}`);
+  }
+  return res.json();
+}
+
+/** Trigger benchmark demo data reset (Admin only). */
+export async function resetDemoData(token: string): Promise<DemoResetResponse> {
+  const res = await fetch(`${V1}/settings/demo-reset`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errorData.detail || "Failed to reset demo data");
+  }
+  return res.json();
+}
+
+/** Preview and validate an uploaded dataset JSON without applying it. */
+export async function previewDataset(
+  datasetJson: Record<string, unknown>,
+  token: string
+): Promise<DatasetPreviewResponse> {
+  const res = await fetch(`${V1}/settings/dataset/preview`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(datasetJson),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errorData.detail || "Failed to preview dataset");
+  }
+  return res.json();
+}
+
+/** Commit verified dataset replacement (Admin only). */
+export async function applyDataset(
+  datasetJson: Record<string, unknown>,
+  confirm: boolean,
+  token: string
+): Promise<{ status: string; message: string; dataset_id: string }> {
+  const res = await fetch(`${V1}/settings/dataset/apply`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ dataset_json: datasetJson, confirm }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errorData.detail || "Failed to apply dataset replacement");
+  }
+  return res.json();
+}
+
+/** Reload dataset from disk and invalidate backend caches (Admin only). */
+export async function reloadDataset(token: string): Promise<{ status: string; message: string }> {
+  const res = await fetch(`${V1}/settings/dataset/reload`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errorData.detail || "Failed to reload dataset");
+  }
+  return res.json();
+}
+
+/** Fetch administrative audit logs (Admin only). */
+export async function getAuditLogs(token: string, limit = 50): Promise<AuditLogEntry[]> {
+  const res = await fetch(`${V1}/settings/audit-log?limit=${limit}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errorData.detail || "Failed to retrieve audit log");
+  }
+  return res.json();
+}
+
 
 
 

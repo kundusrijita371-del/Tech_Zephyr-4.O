@@ -60,6 +60,16 @@ def init_db() -> None:
             );
         """)
 
+        # 3. System settings table (stores booking priority order, active configurations)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS system_settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                updated_by TEXT NOT NULL
+            );
+        """)
+
         conn.commit()
     finally:
         conn.close()

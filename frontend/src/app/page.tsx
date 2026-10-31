@@ -14,6 +14,7 @@ import { ExaminationsManagementView } from "@/components/ExaminationsManagementV
 import { VenuesManagementView } from "@/components/VenuesManagementView";
 import { ReschedulingManagementView } from "@/components/ReschedulingManagementView";
 import { AIAssistantView } from "@/components/AIAssistantView";
+import { SettingsManagementView } from "@/components/SettingsManagementView";
 import { LoginModal } from "@/components/LoginModal";
 
 export default function DashboardPage() {
@@ -148,6 +149,13 @@ export default function DashboardPage() {
             <ReschedulingManagementView />
           ) : activeTab === "ai" ? (
             <AIAssistantView authenticatedRole={currentUser?.role} />
+          ) : activeTab === "settings" ? (
+            <SettingsManagementView
+              currentUser={currentUser}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
+              onLogout={handleLogout}
+              onNavigateTab={(tab) => setActiveTab(tab as NavTabId)}
+            />
           ) : activeTab !== "overview" ? (
             <ComingSoonView
               tabId={activeTab}

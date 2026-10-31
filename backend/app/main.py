@@ -18,6 +18,7 @@ from app.routers import bookings as bookings_router
 from app.routers import dataset as dataset_router
 from app.routers import exams as exams_router
 from app.routers import rescheduling as rescheduling_router
+from app.routers import settings as settings_router
 from app.routers import timetable as timetable_router
 from app.services.database import init_db
 from app.services.seed_demo import seed_demo_accounts
@@ -60,6 +61,7 @@ app.include_router(bookings_router.router, prefix=API_V1_PREFIX)
 app.include_router(rescheduling_router.router, prefix=API_V1_PREFIX)
 app.include_router(assistant_router.router, prefix=API_V1_PREFIX)
 app.include_router(auth_router.router, prefix=API_V1_PREFIX)
+app.include_router(settings_router.router, prefix=API_V1_PREFIX)
 
 
 
