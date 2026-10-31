@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { clearStoredAuth, getDatasetSummary, getStoredAuth, logoutUser } from "@/lib/api";
+import { clearStoredAuth, getDatasetSummary, getStoredAuth, loginUser, logoutUser, setStoredAuth } from "@/lib/api";
 import type { DatasetSummary, User } from "@/lib/types";
 import { Sidebar, type NavTabId } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
@@ -24,7 +24,17 @@ import { ClubBookingStatusView } from "@/components/ClubBookingStatusView";
 import { UnauthorizedView } from "@/components/UnauthorizedView";
 import { isTabAuthorizedForRole, getNavItemsForRole } from "@/lib/navigation";
 import { LoginModal } from "@/components/LoginModal";
-import { LandingPage } from "@/components/LandingPage";
+const DEFAULT_DEMO_ADMIN: User = {
+  id: "usr_demo_admin",
+  email: "admin@cit-demo.test",
+  full_name: "CIT Campus Administrator",
+  role: "admin",
+  department: null,
+  club: null,
+  is_active: true,
+  is_verified: true,
+  created_at: "2026-01-01T00:00:00Z",
+};
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DatasetSummary | null>(null);
@@ -35,23 +45,35 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<NavTabId>("overview");
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
 
-  // Authentication State
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  // Authentication State — initialized directly to Demo Admin to bypass login gate
+  const [currentUser, setCurrentUser] = useState<User | null>(DEFAULT_DEMO_ADMIN);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
 
-  // Load persisted user session on mount
+  // Load persisted user session on mount or authenticate default demo admin
   useEffect(() => {
     const stored = getStoredAuth();
     if (stored.token && stored.user) {
       setAuthToken(stored.token);
       setCurrentUser(stored.user);
+      setAuthChecked(true);
     } else {
-      setAuthToken(null);
-      setCurrentUser(null);
+      // Auto-fetch real demo token for Admin in the background
+      loginUser("admin@cit-demo.test", "CIT_Admin@2026!")
+        .then((res) => {
+          setStoredAuth(res.access_token, res.user);
+          setAuthToken(res.access_token);
+          setCurrentUser(res.user);
+        })
+        .catch(() => {
+          // Keep static demo admin credentials if backend is temporarily unreachable
+          setCurrentUser(DEFAULT_DEMO_ADMIN);
+        })
+        .finally(() => {
+          setAuthChecked(true);
+        });
     }
-    setAuthChecked(true);
   }, []);
 
   const handleLoginSuccess = (user: User, token: string) => {
@@ -111,24 +133,7 @@ export default function DashboardPage() {
   // Role authorization guard
   const isAuthorized = isTabAuthorizedForRole(activeTab, currentUser?.role);
 
-  // Initial authentication hydration check
-  if (!authChecked) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#101014] text-[#F4F2FA]">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] flex items-center justify-center font-black text-white text-xs animate-pulse">
-            CIT
-          </div>
-          <span className="text-sm font-medium text-[#A1A1AA]">Initializing CIT Campus OS...</span>
-        </div>
-      </div>
-    );
-  }
 
-  // If unauthenticated, render the full-screen interactive Landing Page
-  if (!currentUser) {
-    return <LandingPage onLoginSuccess={handleLoginSuccess} />;
-  }
 
   return (
     <div className="flex min-h-screen bg-[#101014] font-sans text-[#F4F2FA] antialiased">
