@@ -1,0 +1,53 @@
+# Virtual Environments
+.venv/
+*/.venv/
+venv/
+ENV/
+env/
+
+# Python
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+*/.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Next.js
+node_modules/
+*/node_modules/
+.next/
+*/.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables & local secrets
+.env
+.env.local
+.env.*.local
+*.env
+!*.env.example
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archives
+*.zip
+
+# Runtime drafts and test proposals
+exports/proposals/
+exports/*_draft.json
+
