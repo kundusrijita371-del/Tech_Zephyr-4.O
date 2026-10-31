@@ -138,3 +138,4 @@ export function getRoleWorkspaceTitle(user: User | null): string {
       return "Campus Administration Dashboard";
   }
 }
+

@@ -24,6 +24,7 @@ import { ClubBookingStatusView } from "@/components/ClubBookingStatusView";
 import { UnauthorizedView } from "@/components/UnauthorizedView";
 import { isTabAuthorizedForRole, getNavItemsForRole } from "@/lib/navigation";
 import { LoginModal } from "@/components/LoginModal";
+import { LandingPage } from "@/components/LandingPage";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DatasetSummary | null>(null);
@@ -38,6 +39,7 @@ export default function DashboardPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [authChecked, setAuthChecked] = useState<boolean>(false);
 
   // Load persisted user session on mount
   useEffect(() => {
@@ -46,20 +48,10 @@ export default function DashboardPage() {
       setAuthToken(stored.token);
       setCurrentUser(stored.user);
     } else {
-      // Default initial view for judges: Admin
-      const defaultAdmin: User = {
-        id: "usr_demo_admin",
-        email: "admin@cit-demo.test",
-        full_name: "CIT Campus Administrator",
-        role: "admin",
-        department: null,
-        club: null,
-        is_active: true,
-        is_verified: true,
-        created_at: new Date().toISOString(),
-      };
-      setCurrentUser(defaultAdmin);
+      setAuthToken(null);
+      setCurrentUser(null);
     }
+    setAuthChecked(true);
   }, []);
 
   const handleLoginSuccess = (user: User, token: string) => {
@@ -118,6 +110,25 @@ export default function DashboardPage() {
 
   // Role authorization guard
   const isAuthorized = isTabAuthorizedForRole(activeTab, currentUser?.role);
+
+  // Initial authentication hydration check
+  if (!authChecked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#101014] text-[#F4F2FA]">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] flex items-center justify-center font-black text-white text-xs animate-pulse">
+            CIT
+          </div>
+          <span className="text-sm font-medium text-[#A1A1AA]">Initializing CIT Campus OS...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // If unauthenticated, render the full-screen interactive Landing Page
+  if (!currentUser) {
+    return <LandingPage onLoginSuccess={handleLoginSuccess} />;
+  }
 
   return (
     <div className="flex min-h-screen bg-[#101014] font-sans text-[#F4F2FA] antialiased">

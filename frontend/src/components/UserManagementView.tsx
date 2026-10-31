@@ -185,3 +185,4 @@ export function UserManagementView({ currentUser, onOpenLogin }: UserManagementV
     </div>
   );
 }
+
