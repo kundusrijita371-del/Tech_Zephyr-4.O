@@ -48,3 +48,9 @@ CORS_ORIGINS: list[str] = [
 
 # API version prefix
 API_V1_PREFIX = "/api/v1"
+
+# Database & Authentication Configuration
+DATABASE_PATH: Path = Path(os.getenv("DATABASE_PATH", str(BACKEND_ROOT / "cit_campus.db"))).resolve()
+DEMO_MODE: bool = os.getenv("DEMO_MODE", "true").lower() in ("true", "1", "yes")
+SECRET_KEY: str = os.getenv("SECRET_KEY", "cit-campus-management-secure-demo-secret-key-2026")
+

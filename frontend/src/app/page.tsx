@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { getDatasetSummary } from "@/lib/api";
-import type { DatasetSummary } from "@/lib/types";
+import { clearStoredAuth, getDatasetSummary, getStoredAuth, logoutUser } from "@/lib/api";
+import type { DatasetSummary, User } from "@/lib/types";
 import { Sidebar, type NavTabId } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { StatCard } from "@/components/StatCard";
@@ -14,6 +14,7 @@ import { ExaminationsManagementView } from "@/components/ExaminationsManagementV
 import { VenuesManagementView } from "@/components/VenuesManagementView";
 import { ReschedulingManagementView } from "@/components/ReschedulingManagementView";
 import { AIAssistantView } from "@/components/AIAssistantView";
+import { LoginModal } from "@/components/LoginModal";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DatasetSummary | null>(null);
@@ -23,6 +24,49 @@ export default function DashboardPage() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<NavTabId>("overview");
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+
+  // Load persisted user session on mount
+  useEffect(() => {
+    const stored = getStoredAuth();
+    if (stored.token && stored.user) {
+      setAuthToken(stored.token);
+      setCurrentUser(stored.user);
+    } else {
+      // Default initial view for judges: Admin
+      const defaultAdmin: User = {
+        id: "usr_demo_admin",
+        email: "admin@cit-demo.test",
+        full_name: "CIT Campus Administrator",
+        role: "admin",
+        department: null,
+        club: null,
+        is_active: true,
+        is_verified: true,
+        created_at: new Date().toISOString(),
+      };
+      setCurrentUser(defaultAdmin);
+    }
+  }, []);
+
+  const handleLoginSuccess = (user: User, token: string) => {
+    setCurrentUser(user);
+    setAuthToken(token);
+  };
+
+  const handleLogout = async () => {
+    if (authToken) {
+      await logoutUser(authToken);
+    }
+    clearStoredAuth();
+    setCurrentUser(null);
+    setAuthToken(null);
+  };
+
 
   const fetchSummary = useCallback(async (isManualRefresh = false) => {
     if (isManualRefresh) {
@@ -89,6 +133,9 @@ export default function DashboardPage() {
           isRefreshing={isRefreshing}
           onRefresh={() => fetchSummary(true)}
           activeTabLabel={activeTabLabel}
+          currentUser={currentUser}
+          onOpenLogin={() => setIsLoginModalOpen(true)}
+          onLogout={handleLogout}
         />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
@@ -101,7 +148,7 @@ export default function DashboardPage() {
           ) : activeTab === "rescheduling" ? (
             <ReschedulingManagementView />
           ) : activeTab === "ai" ? (
-            <AIAssistantView />
+            <AIAssistantView authenticatedRole={currentUser?.role} />
           ) : activeTab !== "overview" ? (
             <ComingSoonView
               tabId={activeTab}
@@ -117,6 +164,80 @@ export default function DashboardPage() {
                   isRetrying={isRefreshing || loading}
                 />
               )}
+
+              {/* Role-Specific Tailored Dashboard Banner */}
+              {currentUser && (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
+                  <div className="flex items-start gap-3.5">
+                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-bold text-white shadow-xs ${
+                      currentUser.role === "admin"
+                        ? "bg-purple-600"
+                        : currentUser.role === "department_coordinator"
+                        ? "bg-blue-600"
+                        : currentUser.role === "faculty"
+                        ? "bg-emerald-600"
+                        : "bg-amber-600"
+                    }`}>
+                      {currentUser.role === "admin"
+                        ? "AD"
+                        : currentUser.role === "department_coordinator"
+                        ? "DC"
+                        : currentUser.role === "faculty"
+                        ? "FC"
+                        : "CR"}
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-bold text-slate-900 text-sm">
+                          {currentUser.full_name}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase ${
+                          currentUser.role === "admin"
+                            ? "bg-purple-100 text-purple-800 border-purple-200"
+                            : currentUser.role === "department_coordinator"
+                            ? "bg-blue-100 text-blue-800 border-blue-200"
+                            : currentUser.role === "faculty"
+                            ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                            : "bg-amber-100 text-amber-800 border-amber-200"
+                        }`}>
+                          {currentUser.role.replace("_", " ")}
+                        </span>
+                        {currentUser.department && (
+                          <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                            Dept: {currentUser.department}
+                          </span>
+                        )}
+                        {currentUser.club && (
+                          <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                            Club: {currentUser.club}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+                        {currentUser.role === "admin" &&
+                          "Administrator Authority: Master oversight of all 189 sessions, 27 venues, 41 midsem exams, and final disruption commits."}
+                        {currentUser.role === "department_coordinator" &&
+                          "CSE Department Coordinator Authority: Oversight of Computer Science course sessions, faculty teaching loads, and departmental venue requests."}
+                        {currentUser.role === "faculty" &&
+                          "Faculty Member Scope: View assigned teaching periods, protected lunch hours (P5–P6), midsem invigilation allocations, and request guest lectures."}
+                        {currentUser.role === "club_representative" &&
+                          "Spectra Club Representative Scope: Request festival venues for Spectra Week (P10–P13) subject to the strict 3-event club quota cap."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsLoginModalOpen(true)}
+                    className="shrink-0 flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all cursor-pointer shadow-2xs"
+                  >
+                    <span>Switch Judge Account</span>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
 
               {/* Institution Hero Card */}
               <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 sm:p-8 text-white shadow-md">
@@ -303,6 +424,16 @@ export default function DashboardPage() {
           )}
         </main>
       </div>
+
+      {/* Judge Demo Login & Switcher Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+      />
     </div>
   );
 }
+

@@ -79,7 +79,23 @@ graph TD
 
 ---
 
+## 🔑 Judge Demo Accounts
+
+Four pre-configured demonstration accounts are provisioned via a safe, idempotent database seed script (`backend/seed.py` and automatic startup seeding when `DEMO_MODE=true`). Passwords are cryptographically hashed using PBKDF2-HMAC-SHA256 with unique salts and are never stored in plaintext.
+
+| Role | Email | Password | Department / Club | Permissions & Dashboard Scope |
+| :--- | :--- | :--- | :--- | :--- |
+| **Administrator** | `admin@cit-demo.test` | `CIT_Admin@2026!` | Campus-Wide | Full administrative authority across all modules: Timetable, Examinations, Venue Bookings, Emergency Rescheduling Commits, and AI Copilot. |
+| **Department Coordinator** | `coordinator@cit-demo.test` | `CIT_Coord@2026!` | Dept: **CSE** | Department-specific dashboard: Computer Science timetable, 40 faculty teaching workloads, departmental seminar hall allocations, and invigilation duties. |
+| **Faculty Member** | `faculty@cit-demo.test` | `CIT_Faculty@2026!` | Dept: **CSE** | Faculty portal: Assigned teaching periods, protected lunch hours (P5–P6), midsem exam invigilation allocations, and guest lecture booking privileges. |
+| **Club Representative** | `spectra@cit-demo.test` | `CIT_Spectra@2026!` | Club: **Spectra** | Student club portal: Spectra festival venue booking requests during evening periods (P10–P13), quota tracking under the official 3-event club cap. |
+
+> **Evaluation Tip**: On the web dashboard, click **"Judge Demo Login"** in the top navigation bar to access 1-click instant login buttons for each of the four accounts without typing credentials.
+
+---
+
 ## 🚀 Quick Start Guide
+
 
 ### Prerequisites
 - Python 3.10+ (with virtual environment support)

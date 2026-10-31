@@ -25,7 +25,11 @@ const STARTER_PROMPTS = [
   { label: "CR-102 Outage", text: "What happens if Room CR-102 becomes unavailable?" },
 ];
 
-export function AIAssistantView() {
+interface AIAssistantViewProps {
+  authenticatedRole?: string;
+}
+
+export function AIAssistantView({ authenticatedRole }: AIAssistantViewProps = {}) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome-1",
@@ -36,10 +40,17 @@ export function AIAssistantView() {
   ]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [userRole, setUserRole] = useState<string>("faculty");
+  const [userRole, setUserRole] = useState<string>(authenticatedRole || "faculty");
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [health, setHealth] = useState<AssistantHealthData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (authenticatedRole) {
+      setUserRole(authenticatedRole);
+    }
+  }, [authenticatedRole]);
+
 
   useEffect(() => {
     getAssistantHealth()

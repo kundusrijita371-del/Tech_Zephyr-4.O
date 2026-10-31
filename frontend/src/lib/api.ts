@@ -24,7 +24,11 @@ import type {
   AssistantChatRequestPayload,
   AssistantChatResponseData,
   AssistantHealthData,
+  TokenResponse,
+  User,
+  DemoAccountPublicInfo,
 } from "./types";
+
 
 // Base URL is injected at build time from the environment variable.
 // Falls back to localhost:8000 for local development.
@@ -395,6 +399,90 @@ export async function sendAssistantChat(
 /** Check assistant service health, provider status, and active model. */
 export const getAssistantHealth = (): Promise<AssistantHealthData> =>
   get<AssistantHealthData>("/assistant/health");
+
+// ---------------------------------------------------------------------------
+// Authentication & Demo Accounts
+// ---------------------------------------------------------------------------
+
+/** Authenticate user with email and password, returning session token & user profile. */
+export async function loginUser(email: string, password: string): Promise<TokenResponse> {
+  const res = await fetch(`${V1}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.detail || `Login failed: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json() as Promise<TokenResponse>;
+}
+
+/** Retrieve currently authenticated user profile using Bearer token. */
+export async function getCurrentUser(token: string): Promise<User> {
+  const res = await fetch(`${V1}/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Session expired or invalid.");
+  }
+
+  return res.json() as Promise<User>;
+}
+
+/** Invalidate session token upon logout. */
+export async function logoutUser(token: string): Promise<void> {
+  await fetch(`${V1}/auth/logout`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  }).catch(() => {});
+}
+
+/** Fetch public metadata for the four judge demo accounts (passwords never exposed). */
+export const getDemoAccountsList = (): Promise<DemoAccountPublicInfo[]> =>
+  get<DemoAccountPublicInfo[]>("/auth/demo-accounts");
+
+// Storage helpers
+const AUTH_TOKEN_KEY = "cit_auth_token";
+const AUTH_USER_KEY = "cit_auth_user";
+
+export function getStoredAuth(): { token: string | null; user: User | null } {
+  if (typeof window === "undefined") return { token: null, user: null };
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  const userJson = localStorage.getItem(AUTH_USER_KEY);
+  let user: User | null = null;
+  if (userJson) {
+    try {
+      user = JSON.parse(userJson);
+    } catch {
+      user = null;
+    }
+  }
+  return { token, user };
+}
+
+export function setStoredAuth(token: string, user: User): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+}
+
+export function clearStoredAuth(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(AUTH_USER_KEY);
+}
+
 
 
 

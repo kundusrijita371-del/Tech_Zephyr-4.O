@@ -654,6 +654,44 @@ export interface AssistantHealthData {
   capabilities: string[];
 }
 
+// ---------------------------------------------------------------------------
+// Authentication & Judge Demo Accounts
+// ---------------------------------------------------------------------------
+
+export type UserRole =
+  | "admin"
+  | "department_coordinator"
+  | "faculty"
+  | "club_representative";
+
+export interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  department: string | null;
+  club: string | null;
+  is_active: boolean;
+  is_verified: boolean;
+  created_at: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
+}
+
+export interface DemoAccountPublicInfo {
+  email: string;
+  full_name: string;
+  role: UserRole;
+  department: string | null;
+  club: string | null;
+  dashboard_scope: string;
+}
+
+
 
 
 
