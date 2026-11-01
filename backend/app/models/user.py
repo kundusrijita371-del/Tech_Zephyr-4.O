@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Any
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 
 class UserRole(str, Enum):
@@ -45,6 +45,16 @@ class LoginRequest(BaseModel):
     """Credentials submitted during authentication."""
     email: str = Field(..., description="Registered account email")
     password: str = Field(..., min_length=6, description="Account password")
+
+
+class SignUpRequest(BaseModel):
+    """Payload submitted when registering a new account."""
+    email: str = Field(..., min_length=3, description="Valid registered account email")
+    password: str = Field(..., min_length=6, description="Account password (at least 6 characters)")
+    full_name: str | None = Field(default=None, description="Display full name")
+    role: UserRole = Field(default=UserRole.FACULTY, description="Assigned role (faculty or club_representative)")
+    department: str | None = Field(default="CSE", description="Academic department")
+    club: str | None = Field(default=None, description="Associated club")
 
 
 class TokenResponse(BaseModel):

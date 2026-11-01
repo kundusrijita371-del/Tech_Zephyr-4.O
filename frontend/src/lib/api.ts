@@ -412,6 +412,36 @@ export const getAssistantHealth = (): Promise<AssistantHealthData> =>
 // ---------------------------------------------------------------------------
 
 /** Authenticate user with email and password, returning session token & user profile. */
+export async function signupUser(
+  email: string,
+  password: string,
+  fullName?: string,
+  role: string = "faculty",
+  department: string = "CSE",
+  club?: string
+): Promise<TokenResponse> {
+  const res = await fetch(`${V1}/auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      password,
+      full_name: fullName || null,
+      role,
+      department,
+      club: club || null,
+    }),
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.detail || `Sign up failed: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json() as Promise<TokenResponse>;
+}
+
 export async function loginUser(email: string, password: string): Promise<TokenResponse> {
   const res = await fetch(`${V1}/auth/login`, {
     method: "POST",

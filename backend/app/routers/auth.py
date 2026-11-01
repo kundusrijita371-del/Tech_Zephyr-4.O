@@ -14,6 +14,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.models.user import (
     DemoAccountPublicInfo,
     LoginRequest,
+    SignUpRequest,
     TokenResponse,
     UserResponse,
     UserRole,
@@ -54,6 +55,37 @@ def get_current_user_optional(
     if not credentials or not credentials.credentials:
         return None
     return AuthService.get_user_by_token(credentials.credentials)
+
+
+@router.post(
+    "/signup",
+    response_model=TokenResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register a new user account and issue active session token",
+)
+def signup(request: SignUpRequest) -> TokenResponse:
+    """Create a new user account with hashed credentials and issue session token."""
+    try:
+        user = AuthService.register_user(
+            email=request.email,
+            password=request.password,
+            full_name=request.full_name,
+            role=request.role,
+            department=request.department,
+            club=request.club,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+
+    token = AuthService.create_session(user.id)
+    return TokenResponse(
+        access_token=token,
+        token_type="bearer",
+        user=user,
+    )
 
 
 @router.post(

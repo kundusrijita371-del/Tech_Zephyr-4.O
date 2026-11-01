@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { clearStoredAuth, getDatasetSummary, getStoredAuth, loginUser, logoutUser, setStoredAuth } from "@/lib/api";
 import type { DatasetSummary, User } from "@/lib/types";
 import { Sidebar, type NavTabId } from "@/components/Sidebar";
@@ -25,6 +24,8 @@ import { ClubBookingStatusView } from "@/components/ClubBookingStatusView";
 import { UnauthorizedView } from "@/components/UnauthorizedView";
 import { isTabAuthorizedForRole, getNavItemsForRole } from "@/lib/navigation";
 import { LoginModal } from "@/components/LoginModal";
+import { CampusLoginPage } from "@/components/CampusLoginPage";
+
 const DEFAULT_DEMO_ADMIN: User = {
   id: "usr_demo_admin",
   email: "admin@cit-demo.test",
@@ -39,7 +40,6 @@ const DEFAULT_DEMO_ADMIN: User = {
 };
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [summary, setSummary] = useState<DatasetSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,35 +48,20 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<NavTabId>("overview");
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
 
-  // Authentication State — initialized directly to Demo Admin to bypass login gate
-  const [currentUser, setCurrentUser] = useState<User | null>(DEFAULT_DEMO_ADMIN);
+  // Authentication State — checks stored session, defaults to Campus Login Page if unauthenticated
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
 
-  // Load persisted user session on mount or authenticate default demo admin
+  // Load persisted user session from localStorage
   useEffect(() => {
     const stored = getStoredAuth();
     if (stored.token && stored.user) {
       setAuthToken(stored.token);
       setCurrentUser(stored.user);
-      setAuthChecked(true);
-    } else {
-      // Auto-fetch real demo token for Admin in the background
-      loginUser("admin@cit-demo.test", "CIT_Admin@2026!")
-        .then((res) => {
-          setStoredAuth(res.access_token, res.user);
-          setAuthToken(res.access_token);
-          setCurrentUser(res.user);
-        })
-        .catch(() => {
-          // Keep static demo admin credentials if backend is temporarily unreachable
-          setCurrentUser(DEFAULT_DEMO_ADMIN);
-        })
-        .finally(() => {
-          setAuthChecked(true);
-        });
     }
+    setAuthChecked(true);
   }, []);
 
   const handleLoginSuccess = (user: User, token: string) => {
@@ -93,7 +78,6 @@ export default function DashboardPage() {
     setCurrentUser(null);
     setAuthToken(null);
     setActiveTab("overview");
-    router.push("/login");
   };
 
   const fetchSummary = useCallback(async (isManualRefresh = false) => {
@@ -137,7 +121,17 @@ export default function DashboardPage() {
   // Role authorization guard
   const isAuthorized = isTabAuthorizedForRole(activeTab, currentUser?.role);
 
-
+  // If not logged in, render the Campus Login & Sign Up page with 4 Judge demo sections
+  if (!currentUser) {
+    return (
+      <CampusLoginPage
+        onLoginSuccess={handleLoginSuccess}
+        onContinueAsGuest={() => {
+          handleLoginSuccess(DEFAULT_DEMO_ADMIN, "preview_token");
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-[#101014] font-sans text-[#F4F2FA] antialiased">
@@ -160,7 +154,7 @@ export default function DashboardPage() {
           onRefresh={() => fetchSummary(true)}
           activeTabLabel={activeTabLabel}
           currentUser={currentUser}
-          onOpenLogin={() => router.push("/login")}
+          onOpenLogin={() => setIsLoginModalOpen(true)}
           onLogout={handleLogout}
         />
 
@@ -170,7 +164,7 @@ export default function DashboardPage() {
               attemptedTab={activeTab}
               currentUser={currentUser}
               onReturnDashboard={() => setActiveTab("overview")}
-              onOpenLogin={() => router.push("/login")}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
             />
           ) : activeTab === "timetable" ? (
             <TimetableManagementView currentUser={currentUser} />
@@ -185,7 +179,7 @@ export default function DashboardPage() {
           ) : activeTab === "settings" ? (
             <SettingsManagementView
               currentUser={currentUser}
-              onOpenLogin={() => router.push("/login")}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
               onLogout={handleLogout}
               onNavigateTab={(tab) => setActiveTab(tab as NavTabId)}
             />
@@ -194,7 +188,7 @@ export default function DashboardPage() {
           ) : activeTab === "users" ? (
             <UserManagementView
               currentUser={currentUser}
-              onOpenLogin={() => router.push("/login")}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
             />
           ) : activeTab === "faculty_groups" ? (
             <CoordinatorFacultyGroupsView />
@@ -282,7 +276,7 @@ export default function DashboardPage() {
                   </div>
 
                   <button
-                    onClick={() => router.push("/login")}
+                    onClick={() => setIsLoginModalOpen(true)}
                     className="shrink-0 flex items-center gap-1.5 rounded-xl border border-[#30303A] bg-[#202027] hover:bg-[#292933] hover:border-[#8B5CF6]/50 px-3.5 py-2 text-xs font-semibold text-[#F4F2FA] transition-all cursor-pointer shadow-xs"
                   >
                     <span>Switch Judge Account</span>

@@ -13,6 +13,7 @@ Verifies:
 
 from __future__ import annotations
 
+import secrets
 import sqlite3
 import pytest
 from fastapi.testclient import TestClient
@@ -26,7 +27,7 @@ from app.services.seed_demo import DEMO_ACCOUNTS, seed_demo_accounts
 BASE_AUTH_URL = "/api/v1/auth"
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def setup_demo_db() -> None:
     """Ensure database is initialized and demo accounts are seeded before tests."""
     init_db()
@@ -240,4 +241,82 @@ class TestDatabaseSecurityAndIdempotency:
             assert "password" not in item
             assert "hashed_password" not in item
             assert "salt" not in item
+
+
+class TestSignUpEndpoint:
+    """Verifies public workable user registration."""
+
+    def test_successful_faculty_signup(self, client: TestClient) -> None:
+        """New user can sign up, gets hashed password, token, and me profile access."""
+        unique_email = f"dr.patel.{secrets.token_hex(4)}@cit.ac.in"
+        signup_data = {
+            "email": unique_email,
+            "password": "PatelSecurePass@2026",
+            "full_name": "Dr. Rajesh Patel",
+            "role": "faculty",
+            "department": "CSE",
+        }
+        res = client.post(f"{BASE_AUTH_URL}/signup", json=signup_data)
+        assert res.status_code == 201, res.text
+        data = res.json()
+
+        assert "access_token" in data
+        assert data["token_type"] == "bearer"
+        user = data["user"]
+        assert user["email"] == unique_email
+        assert user["full_name"] == "Dr. Rajesh Patel"
+        assert user["role"] == "faculty"
+        assert user["department"] == "CSE"
+        assert "password" not in user
+        assert "hashed_password" not in user
+
+        # Verify Bearer token works immediately
+        me_res = client.get(
+            f"{BASE_AUTH_URL}/me",
+            headers={"Authorization": f"Bearer {data['access_token']}"},
+        )
+        assert me_res.status_code == 200
+        assert me_res.json()["email"] == unique_email
+
+        # Verify user can log in with new credentials
+        login_res = client.post(
+            f"{BASE_AUTH_URL}/login",
+            json={"email": unique_email, "password": "PatelSecurePass@2026"},
+        )
+        assert login_res.status_code == 200
+        assert login_res.json()["user"]["id"] == user["id"]
+
+    def test_duplicate_email_signup_fails(self, client: TestClient) -> None:
+        """Attempting to sign up with an existing email returns 400."""
+        # admin@cit-demo.test is already in the database
+        res = client.post(
+            f"{BASE_AUTH_URL}/signup",
+            json={
+                "email": "admin@cit-demo.test",
+                "password": "AnotherPassword123!",
+                "full_name": "Duplicate Person",
+                "role": "faculty",
+            },
+        )
+        assert res.status_code == 400
+        detail = res.json()["detail"].lower()
+        assert "already exists" in detail or "already registered" in detail
+
+    def test_admin_role_escalation_prevented(self, client: TestClient) -> None:
+        """Public signup requesting 'admin' role is automatically sanitized to non-admin."""
+        unique_rogue = f"rogue.{secrets.token_hex(4)}@cit.ac.in"
+        res = client.post(
+            f"{BASE_AUTH_URL}/signup",
+            json={
+                "email": unique_rogue,
+                "password": "RoguePassword123!",
+                "full_name": "Rogue User",
+                "role": "admin",
+            },
+        )
+        assert res.status_code == 201
+        user = res.json()["user"]
+        assert user["role"] != "admin"
+        assert user["role"] in ["faculty", "club_representative", "student"]
+
 
