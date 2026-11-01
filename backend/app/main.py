@@ -66,9 +66,11 @@ app.include_router(settings_router.router, prefix=API_V1_PREFIX)
 
 
 # ---------------------------------------------------------------------------
-# Health check endpoint
+# Health check endpoints
 # ---------------------------------------------------------------------------
 @app.get("/health", tags=["health"], summary="Health check endpoint")
+@app.get("/api/health", tags=["health"], summary="API health check alias")
+@app.get(f"{API_V1_PREFIX}/health", tags=["health"], summary="Versioned health check alias")
 def health() -> dict[str, str]:
     """Verify that the FastAPI service is running and responsive."""
     return {"status": "ok"}

@@ -12,8 +12,12 @@ BACKEND_ROOT = Path(__file__).resolve().parent.parent
 # Repo root is one level above backend/
 REPO_ROOT = BACKEND_ROOT.parent
 
-# Default dataset path is ../data/cit_public.json relative to backend application root
-DEFAULT_DATASET_PATH = (BACKEND_ROOT / ".." / "data" / "cit_public.json").resolve()
+# Default dataset path: check bundled backend/data first, then fallback to repo root ../data
+_bundled_data = BACKEND_ROOT / "data" / "cit_public.json"
+if _bundled_data.exists():
+    DEFAULT_DATASET_PATH = _bundled_data.resolve()
+else:
+    DEFAULT_DATASET_PATH = (BACKEND_ROOT / ".." / "data" / "cit_public.json").resolve()
 
 # Allow override via DATASET_PATH environment variable
 _raw_dataset_path = os.getenv("DATASET_PATH")
@@ -28,8 +32,19 @@ if _raw_dataset_path:
 else:
     DATASET_PATH = DEFAULT_DATASET_PATH
 
-# Exports directory
-EXPORTS_DIR: Path = (REPO_ROOT / "exports").resolve()
+# Exports directory — resolves to repo exports or local backend exports
+_raw_exports = os.getenv("EXPORTS_DIR")
+if _raw_exports:
+    EXPORTS_DIR = Path(_raw_exports).resolve()
+elif (REPO_ROOT / "exports").exists():
+    EXPORTS_DIR = (REPO_ROOT / "exports").resolve()
+else:
+    EXPORTS_DIR = (BACKEND_ROOT / "exports").resolve()
+try:
+    EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
+
 TIMETABLE_DRAFT_PATH: Path = EXPORTS_DIR / "timetable_draft.json"
 EXAMS_DRAFT_PATH: Path = EXPORTS_DIR / "exams_draft.json"
 SCHEDULE_DRAFT_PATH: Path = EXPORTS_DIR / "schedule_draft.json"
@@ -49,8 +64,11 @@ CORS_ORIGINS: list[str] = [
 # API version prefix
 API_V1_PREFIX = "/api/v1"
 
-# Database & Authentication Configuration
-DATABASE_PATH: Path = Path(os.getenv("DATABASE_PATH", str(BACKEND_ROOT / "cit_campus.db"))).resolve()
+# Database & Authentication Configuration — on Vercel, use /tmp for write operations
+if os.getenv("VERCEL") and not os.getenv("DATABASE_PATH"):
+    DATABASE_PATH: Path = Path("/tmp/cit_campus.db").resolve()
+else:
+    DATABASE_PATH: Path = Path(os.getenv("DATABASE_PATH", str(BACKEND_ROOT / "cit_campus.db"))).resolve()
 DEMO_MODE: bool = os.getenv("DEMO_MODE", "true").lower() in ("true", "1", "yes")
 SECRET_KEY: str = os.getenv("SECRET_KEY", "cit-campus-management-secure-demo-secret-key-2026")
 
