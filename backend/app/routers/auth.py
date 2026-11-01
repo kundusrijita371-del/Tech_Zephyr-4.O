@@ -14,7 +14,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.models.user import (
     DemoAccountPublicInfo,
     LoginRequest,
-    SignUpRequest,
+    RegisterRequest,
     TokenResponse,
     UserResponse,
     UserRole,
@@ -58,13 +58,13 @@ def get_current_user_optional(
 
 
 @router.post(
-    "/signup",
+    "/register",
     response_model=TokenResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Register a new user account and issue active session token",
+    summary="Register a new campus user account",
 )
-def signup(request: SignUpRequest) -> TokenResponse:
-    """Create a new user account with hashed credentials and issue session token."""
+def register(request: RegisterRequest) -> TokenResponse:
+    """Create a new user account, hash password with PBKDF2, and issue session token."""
     try:
         user = AuthService.register_user(
             email=request.email,

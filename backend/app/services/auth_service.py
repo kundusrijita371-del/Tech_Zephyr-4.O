@@ -19,8 +19,8 @@ from app.services.database import get_db_connection
 
 logger = logging.getLogger(__name__)
 
-# Security parameters (PBKDF2 iterations balanced for fast response and brute-force resistance)
-PBKDF2_ITERATIONS = 50_000
+# Security parameters (OWASP-compliant PBKDF2 iterations)
+PBKDF2_ITERATIONS = 600_000
 SALT_BYTES = 16
 SESSION_EXPIRY_DAYS = 7
 
@@ -60,42 +60,24 @@ class AuthService:
     def register_user(
         email: str,
         password: str,
-        full_name: str | None = None,
-        role: UserRole | str = UserRole.FACULTY,
-        department: str | None = "CSE",
+        full_name: str,
+        role: UserRole = UserRole.FACULTY,
+        department: str | None = None,
         club: str | None = None,
     ) -> UserResponse:
-        """Register a new user account with secure PBKDF2 hashing.
-        
-        Enforces:
-        - Email uniqueness check.
-        - Admin accounts cannot be self-registered (public signup defaults to faculty/club).
-        - Generates unique ID and salts.
-        """
-        clean_email = email.strip().lower()
-        if not clean_email or "@" not in clean_email:
-            raise ValueError("A valid email address is required.")
-        if len(password) < 6:
-            raise ValueError("Password must be at least 6 characters.")
-
-        # Admin cannot be registered via public signup
-        assigned_role = UserRole(role) if isinstance(role, str) else role
-        if assigned_role == UserRole.ADMIN:
-            assigned_role = UserRole.FACULTY
-
-        clean_name = (full_name or "").strip() or clean_email.split("@")[0].replace(".", " ").title()
-        user_id = f"usr_{secrets.token_hex(6)}"
-        now_iso = datetime.now(timezone.utc).isoformat()
-
+        """Register a new user account with hashed credentials."""
+        email_clean = email.strip().lower()
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(?)", (clean_email,))
+            cursor.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(?)", (email_clean,))
             if cursor.fetchone():
-                raise ValueError("An account with this email address already exists.")
+                raise ValueError(f"An account with email '{email_clean}' already exists.")
 
+            user_id = f"usr_{secrets.token_hex(6)}"
             hashed_pw, salt = AuthService.hash_password(password)
-            fac_id = "F01" if assigned_role == UserRole.FACULTY else None
+            now_iso = datetime.now(timezone.utc).isoformat()
+            fac_id = "F01" if role == UserRole.FACULTY else None
 
             cursor.execute(
                 """
@@ -106,11 +88,11 @@ class AuthService:
                 """,
                 (
                     user_id,
-                    clean_email,
+                    email_clean,
                     hashed_pw,
                     salt,
-                    clean_name,
-                    assigned_role.value,
+                    full_name.strip(),
+                    role.value if isinstance(role, UserRole) else str(role),
                     department,
                     club,
                     fac_id,
@@ -122,9 +104,9 @@ class AuthService:
 
             return UserResponse(
                 id=user_id,
-                email=clean_email,
-                full_name=clean_name,
-                role=assigned_role,
+                email=email_clean,
+                full_name=full_name.strip(),
+                role=role,
                 department=department,
                 club=club,
                 faculty_id=fac_id,

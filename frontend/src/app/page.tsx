@@ -24,8 +24,7 @@ import { ClubBookingStatusView } from "@/components/ClubBookingStatusView";
 import { UnauthorizedView } from "@/components/UnauthorizedView";
 import { isTabAuthorizedForRole, getNavItemsForRole } from "@/lib/navigation";
 import { LoginModal } from "@/components/LoginModal";
-import { CampusLoginPage } from "@/components/CampusLoginPage";
-
+import { LoginPage } from "@/components/LoginPage";
 const DEFAULT_DEMO_ADMIN: User = {
   id: "usr_demo_admin",
   email: "admin@cit-demo.test",
@@ -48,13 +47,13 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<NavTabId>("overview");
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
 
-  // Authentication State — checks stored session, defaults to Campus Login Page if unauthenticated
+  // Authentication State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
 
-  // Load persisted user session from localStorage
+  // Load persisted user session on mount
   useEffect(() => {
     const stored = getStoredAuth();
     if (stored.token && stored.user) {
@@ -68,6 +67,17 @@ export default function DashboardPage() {
     setCurrentUser(user);
     setAuthToken(token);
     setActiveTab("overview");
+  };
+
+  const handleContinueAsGuest = () => {
+    loginUser("admin@cit-demo.test", "CIT_Admin@2026!")
+      .then((res) => {
+        setStoredAuth(res.access_token, res.user);
+        handleLoginSuccess(res.user, res.access_token);
+      })
+      .catch(() => {
+        handleLoginSuccess(DEFAULT_DEMO_ADMIN, "mock_token");
+      });
   };
 
   const handleLogout = async () => {
@@ -121,14 +131,22 @@ export default function DashboardPage() {
   // Role authorization guard
   const isAuthorized = isTabAuthorizedForRole(activeTab, currentUser?.role);
 
-  // If not logged in, render the Campus Login & Sign Up page with 4 Judge demo sections
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-[#101014] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#8B5CF6] border-t-transparent" />
+          <span className="text-xs font-mono text-[#A1A1AA]">Initializing CIT Campus OS...</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser) {
     return (
-      <CampusLoginPage
+      <LoginPage
         onLoginSuccess={handleLoginSuccess}
-        onContinueAsGuest={() => {
-          handleLoginSuccess(DEFAULT_DEMO_ADMIN, "preview_token");
-        }}
+        onContinueAsGuest={handleContinueAsGuest}
       />
     );
   }
