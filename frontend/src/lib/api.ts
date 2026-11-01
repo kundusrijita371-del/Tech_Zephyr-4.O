@@ -38,10 +38,13 @@ import type {
 
 
 // Base URL is injected at build time from the environment variable.
+// In production, defaults to the deployed backend URL (https://tech-zephyr-4-o.vercel.app) if unset.
 // Falls back to localhost:8000 for local development.
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+  (process.env.NODE_ENV === "production"
+    ? "https://tech-zephyr-4-o.vercel.app"
+    : "http://localhost:8000");
 
 const V1 = `${API_BASE}/api/v1`;
 
@@ -55,8 +58,10 @@ async function get<T>(path: string): Promise<T> {
   });
 
   if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    const detail = errData.detail || `${res.status} ${res.statusText}`;
     throw new Error(
-      `CIT API error: ${res.status} ${res.statusText} — GET ${path}`
+      `CIT API error: ${detail} — GET ${path}`
     );
   }
 
@@ -168,8 +173,9 @@ export async function generateTimetable(options?: {
   });
 
   if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
     throw new Error(
-      `CIT Timetable Generation Error: ${res.status} ${res.statusText}`
+      errData.detail || `CIT Timetable Generation Error: ${res.status} ${res.statusText}`
     );
   }
 
@@ -201,8 +207,9 @@ export async function generateExams(
   });
 
   if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
     throw new Error(
-      `CIT Exam Generation Error: ${res.status} ${res.statusText}`
+      errData.detail || `CIT Exam Generation Error: ${res.status} ${res.statusText}`
     );
   }
 
@@ -239,8 +246,9 @@ export async function generateBookings(): Promise<BookingValidationReport> {
   });
 
   if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
     throw new Error(
-      `CIT Booking Allocation Error: ${res.status} ${res.statusText}`
+      errData.detail || `CIT Booking Allocation Error: ${res.status} ${res.statusText}`
     );
   }
 

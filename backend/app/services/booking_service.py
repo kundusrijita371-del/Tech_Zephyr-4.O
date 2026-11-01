@@ -76,7 +76,7 @@ class BookingService:
         cls._latest_schedule = schedule
         cls._latest_report = report
 
-        cls._export_schedule(schedule)
+        cls._export_schedule(schedule, base_timetable=base_timetable)
         return schedule, report
 
     @classmethod
@@ -335,7 +335,11 @@ class BookingService:
         cls._latest_report = None
 
     @classmethod
-    def _export_schedule(cls, fest_week: FestWeekSchedule) -> None:
+    def _export_schedule(
+        cls,
+        fest_week: FestWeekSchedule,
+        base_timetable: dict[str, tuple[str, int, str]] | None = None,
+    ) -> None:
         """Persist bookings to bookings_draft.json and merge into schedule_draft.json and schedule.json."""
         try:
             EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -382,6 +386,12 @@ class BookingService:
                         combined["sessions"] = tt_raw.get("sessions", [])
                 except Exception:
                     pass
+
+            if not combined.get("sessions") and base_timetable and len(base_timetable) == 189:
+                combined["sessions"] = [
+                    {"session_id": sid, "day": day, "start_period": p, "room_id": r}
+                    for sid, (day, p, r) in base_timetable.items()
+                ]
 
             if not combined.get("sessions"):
                 tt_latest = TimetableService.get_latest()
