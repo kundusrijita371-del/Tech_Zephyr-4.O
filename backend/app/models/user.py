@@ -27,6 +27,7 @@ class UserBase(BaseModel):
     role: UserRole = Field(..., description="Backend-assigned user role")
     department: str | None = Field(default=None, description="Academic department (e.g. CSE)")
     club: str | None = Field(default=None, description="Associated student organization (e.g. Spectra)")
+    faculty_id: str | None = Field(default=None, description="Associated faculty identifier (e.g. F01)")
     is_active: bool = Field(default=True, description="Account active status")
     is_verified: bool = Field(default=True, description="Account email verification status")
 

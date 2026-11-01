@@ -157,6 +157,9 @@ class TimetableSolver:
         # 6. Extract assignment
         assignment: dict[str, tuple[str, int, str]] = {}
         schedule_sessions: list[TimetableSessionAssignment] = []
+        sess_by_id = {s.id: s for s in self.dataset.sessions}
+        course_by_id = {c.id: c.title for c in self.dataset.courses}
+        fac_by_id = {f.id: f.name for f in self.dataset.faculty}
 
         for sid, cands in candidates.items():
             chosen_cand: CandidatePlacement | None = None
@@ -172,12 +175,28 @@ class TimetableSolver:
                     chosen_cand.start_period,
                     chosen_cand.room_id,
                 )
+                raw_s = sess_by_id.get(sid)
+                c_id = raw_s.course_id if raw_s else None
+                c_title = course_by_id.get(c_id) if c_id else None
+                f_id = raw_s.faculty_id if raw_s else None
+                f_name = fac_by_id.get(f_id) if f_id else None
+                grps = raw_s.groups if raw_s else []
+                knd = raw_s.kind if raw_s else None
+                dur = raw_s.duration if raw_s else 1
+
                 schedule_sessions.append(
                     TimetableSessionAssignment(
                         session_id=sid,
                         day=chosen_cand.day,
                         start_period=chosen_cand.start_period,
                         room_id=chosen_cand.room_id,
+                        course_id=c_id,
+                        course_title=c_title,
+                        faculty_id=f_id,
+                        faculty_name=f_name,
+                        groups=grps,
+                        kind=knd,
+                        duration=dur,
                     )
                 )
 

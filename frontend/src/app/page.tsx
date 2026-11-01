@@ -31,6 +31,7 @@ const DEFAULT_DEMO_ADMIN: User = {
   role: "admin",
   department: null,
   club: null,
+  faculty_id: null,
   is_active: true,
   is_verified: true,
   created_at: "2026-01-01T00:00:00Z",

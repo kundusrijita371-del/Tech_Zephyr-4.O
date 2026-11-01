@@ -176,9 +176,9 @@ export async function generateTimetable(options?: {
   return res.json() as Promise<TimetableResponse>;
 }
 
-/** Get the latest generated timetable. Throws 404 if none exists. */
-export const getLatestTimetable = (): Promise<TimetableResponse> =>
-  get<TimetableResponse>("/timetable");
+/** Get the latest generated timetable, optionally filtered by faculty. Throws 404 if none exists. */
+export const getLatestTimetable = (facultyId?: string): Promise<TimetableResponse> =>
+  get<TimetableResponse>(facultyId ? `/timetable?faculty_id=${encodeURIComponent(facultyId)}` : "/timetable");
 
 /** Get official validation for the latest generated timetable. */
 export const getTimetableValidation = (): Promise<TimetableValidationResponse> =>

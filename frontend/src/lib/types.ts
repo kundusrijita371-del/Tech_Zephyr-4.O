@@ -251,6 +251,13 @@ export interface TimetableSessionAssignment {
   day: string;
   start_period: number;
   room_id: string;
+  course_id?: string | null;
+  course_title?: string | null;
+  faculty_id?: string | null;
+  faculty_name?: string | null;
+  groups?: string[];
+  kind?: SessionKind | null;
+  duration?: number;
 }
 
 export interface TimetableSchedule {
@@ -260,7 +267,7 @@ export interface TimetableSchedule {
 }
 
 export interface TimetableSolverMetadata {
-  solver_status: "OPTIMAL" | "FEASIBLE" | "INFEASIBLE" | "UNKNOWN";
+  solver_status: "OPTIMAL" | "FEASIBLE" | "INFEASIBLE" | "UNKNOWN" | "NOT_GENERATED";
   solve_time_seconds: number;
   scheduled_sessions: number;
   total_sessions: number;
@@ -283,6 +290,8 @@ export interface TimetableValidationResponse {
   hard_violations: Array<Record<string, unknown>>;
   soft_penalty: number;
   soft_penalties: Record<string, number>;
+  sessions_checked?: number;
+  total_sessions?: number;
 }
 
 
@@ -671,6 +680,7 @@ export interface User {
   role: UserRole;
   department: string | null;
   club: string | null;
+  faculty_id?: string | null;
   is_active: boolean;
   is_verified: boolean;
   created_at: string;

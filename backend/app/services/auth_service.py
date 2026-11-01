@@ -79,6 +79,10 @@ class AuthService:
             if not AuthService.verify_password(password, row["hashed_password"], row["salt"]):
                 return None
 
+            fac_id = row["faculty_id"] if "faculty_id" in row.keys() else None
+            if not fac_id and UserRole(row["role"]) == UserRole.FACULTY:
+                fac_id = "F01"
+
             return UserResponse(
                 id=row["id"],
                 email=row["email"],
@@ -86,6 +90,7 @@ class AuthService:
                 role=UserRole(row["role"]),
                 department=row["department"],
                 club=row["club"],
+                faculty_id=fac_id,
                 is_active=bool(row["is_active"]),
                 is_verified=bool(row["is_verified"]),
                 created_at=row["created_at"],
@@ -147,6 +152,10 @@ class AuthService:
             if not row["is_active"]:
                 return None
 
+            fac_id = row["faculty_id"] if "faculty_id" in row.keys() else None
+            if not fac_id and UserRole(row["role"]) == UserRole.FACULTY:
+                fac_id = "F01"
+
             return UserResponse(
                 id=row["id"],
                 email=row["email"],
@@ -154,6 +163,7 @@ class AuthService:
                 role=UserRole(row["role"]),
                 department=row["department"],
                 club=row["club"],
+                faculty_id=fac_id,
                 is_active=bool(row["is_active"]),
                 is_verified=bool(row["is_verified"]),
                 created_at=row["created_at"],

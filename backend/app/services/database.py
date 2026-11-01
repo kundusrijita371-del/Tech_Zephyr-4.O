@@ -49,6 +49,12 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
         """)
 
+        # Migration: ensure faculty_id column exists
+        try:
+            cursor.execute("ALTER TABLE users ADD COLUMN faculty_id TEXT;")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
         # 2. Sessions table (stores active session bearer tokens)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS user_sessions (

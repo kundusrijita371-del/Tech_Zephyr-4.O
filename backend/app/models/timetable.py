@@ -12,6 +12,14 @@ class TimetableSessionAssignment(BaseModel):
     day: str = Field(..., description="Scheduled day (MON, TUE, WED, THU, FRI)")
     start_period: int = Field(..., description="Starting teaching period (1 to 9)")
     room_id: str = Field(..., description="Assigned room identifier")
+    # Enriched session fields for faculty / group / course display:
+    course_id: str | None = Field(default=None, description="Course ID")
+    course_title: str | None = Field(default=None, description="Course Title")
+    faculty_id: str | None = Field(default=None, description="Assigned Faculty ID")
+    faculty_name: str | None = Field(default=None, description="Assigned Faculty Name")
+    groups: list[str] = Field(default_factory=list, description="Target Student Groups")
+    kind: str | None = Field(default=None, description="Session Kind (lecture, tutorial, lab)")
+    duration: int = Field(default=1, description="Duration in teaching periods")
 
 
 class TimetableSchedule(BaseModel):
@@ -25,7 +33,7 @@ class TimetableSchedule(BaseModel):
 
 class TimetableSolverMetadata(BaseModel):
     """Detailed metadata returned by the CP-SAT timetable solver."""
-    solver_status: Literal["OPTIMAL", "FEASIBLE", "INFEASIBLE", "UNKNOWN"]
+    solver_status: Literal["OPTIMAL", "FEASIBLE", "INFEASIBLE", "UNKNOWN", "NOT_GENERATED"]
     solve_time_seconds: float
     scheduled_sessions: int
     total_sessions: int
@@ -64,4 +72,6 @@ class TimetableValidationResponse(BaseModel):
     hard_violations: list[dict[str, Any]] = Field(default_factory=list)
     soft_penalty: int
     soft_penalties: dict[str, int] = Field(default_factory=dict)
+    sessions_checked: int = 0
+    total_sessions: int = 0
 

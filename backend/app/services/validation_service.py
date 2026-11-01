@@ -56,18 +56,6 @@ class TimetableValidator:
         # Official hard constraint checks
         hard_violations, _ = validator.check_timetable(ctx, assignment, label)
 
-        # Check for any unassigned sessions in the dataset
-        all_sids = {s.id for s in dataset.sessions}
-        for sid in all_sids:
-            if sid not in assignment:
-                hard_violations.append(
-                    {
-                        "rule": "H1",
-                        "where": label,
-                        "detail": f"Session {sid} is not scheduled",
-                    }
-                )
-
         # Official soft penalty checks
         soft_penalties, soft_total = validator.soft_score(ctx, assignment)
 
@@ -90,12 +78,18 @@ class TimetableValidator:
             dataset, assignment
         )
 
+        sessions_checked = len(assignment)
+        total_sessions = len(dataset.sessions)
+        is_valid = len(hard_violations) == 0 and sessions_checked == total_sessions and total_sessions > 0
+
         return TimetableValidationResponse(
-            is_valid=len(hard_violations) == 0,
+            is_valid=is_valid,
             hard_violation_count=len(hard_violations),
             hard_violations=hard_violations,
             soft_penalty=soft_total,
             soft_penalties=soft_penalties,
+            sessions_checked=sessions_checked,
+            total_sessions=total_sessions,
         )
 
 

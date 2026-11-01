@@ -61,9 +61,13 @@ def generate_timetable(
     response_model=TimetableResponse,
     summary="Get the most recently generated timetable",
 )
-def get_latest_timetable() -> TimetableResponse:
+def get_latest_timetable(
+    faculty_id: str | None = None,
+    current_user: Annotated[UserResponse | None, Depends(get_current_user_optional)] = None,
+) -> TimetableResponse:
     """Retrieve the latest generated timetable.
 
+    Supports optional filtering by faculty_id or authenticated faculty role.
     Returns 404 if no timetable has been generated yet.
     """
     timetable = TimetableService.get_latest()
@@ -72,7 +76,56 @@ def get_latest_timetable() -> TimetableResponse:
             status_code=404,
             detail="No timetable generated yet. Call POST /api/v1/timetable/generate first.",
         )
+
+    active_faculty_id = faculty_id
+    if not active_faculty_id and current_user and current_user.role == UserRole.FACULTY:
+        active_faculty_id = current_user.faculty_id or "F01"
+
+    if active_faculty_id:
+        target_fid = active_faculty_id.strip().upper()
+        filtered_sessions = [
+            s for s in timetable.schedule.sessions
+            if s.faculty_id and s.faculty_id.upper() == target_fid
+        ]
+        filtered_schedule = timetable.schedule.model_copy(
+            update={"sessions": filtered_sessions}
+        )
+        return TimetableResponse(
+            schedule=filtered_schedule,
+            metadata=timetable.metadata,
+            violations=timetable.violations,
+        )
+
     return timetable
+
+
+@router.get(
+    "/faculty/{faculty_id}",
+    response_model=TimetableResponse,
+    summary="Get timetable sessions assigned to a specific faculty member",
+)
+def get_faculty_timetable(faculty_id: str) -> TimetableResponse:
+    """Retrieve timetable sessions filtered for a specific faculty member."""
+    timetable = TimetableService.get_latest()
+    if timetable is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No timetable generated yet. Call POST /api/v1/timetable/generate first.",
+        )
+
+    target_fid = faculty_id.strip().upper()
+    filtered_sessions = [
+        s for s in timetable.schedule.sessions
+        if s.faculty_id and s.faculty_id.upper() == target_fid
+    ]
+    filtered_schedule = timetable.schedule.model_copy(
+        update={"sessions": filtered_sessions}
+    )
+    return TimetableResponse(
+        schedule=filtered_schedule,
+        metadata=timetable.metadata,
+        violations=timetable.violations,
+    )
 
 
 @router.get(

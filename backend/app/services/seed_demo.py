@@ -36,6 +36,7 @@ DEMO_ACCOUNTS: list[dict[str, Any]] = [
         "role": UserRole.ADMIN,
         "department": None,
         "club": None,
+        "faculty_id": None,
         "dashboard_scope": "Full Campus Access: Overview, Timetable, Exams, Bookings, Rescheduling, AI Assistant, Settings",
     },
     {
@@ -46,16 +47,18 @@ DEMO_ACCOUNTS: list[dict[str, Any]] = [
         "role": UserRole.DEPARTMENT_COORDINATOR,
         "department": "CSE",
         "club": None,
+        "faculty_id": None,
         "dashboard_scope": "Department Dashboard: CSE Timetable, Faculty Workload, Exam Venues & Department Bookings",
     },
     {
         "id": "usr_demo_faculty",
         "email": "faculty@cit-demo.test",
         "password": "CIT_Faculty@2026!",
-        "full_name": "Dr. CSE Faculty Member",
+        "full_name": "Dr. Ananya Mishra",
         "role": UserRole.FACULTY,
         "department": "CSE",
         "club": None,
+        "faculty_id": "F01",
         "dashboard_scope": "Faculty Portal: Teaching Schedule, Invigilation Duty, Departmental Venues & Guest Lectures",
     },
     {
@@ -66,6 +69,7 @@ DEMO_ACCOUNTS: list[dict[str, Any]] = [
         "role": UserRole.CLUB_REPRESENTATIVE,
         "department": None,
         "club": "Spectra",
+        "faculty_id": None,
         "dashboard_scope": "Club Portal: Spectra Week Booking Requests, Equipment Checks, Quota Tracking & AI Booking Copilot",
     },
 ]
@@ -99,6 +103,7 @@ def seed_demo_accounts(force: bool = False) -> dict[str, int]:
             role_val = account["role"].value if isinstance(account["role"], UserRole) else str(account["role"])
             department = account["department"]
             club = account["club"]
+            faculty_id = account.get("faculty_id")
 
             # Derive cryptographic hash and unique salt
             hashed_pw, salt = AuthService.hash_password(password)
@@ -118,12 +123,13 @@ def seed_demo_accounts(force: bool = False) -> dict[str, int]:
                         role = ?,
                         department = ?,
                         club = ?,
+                        faculty_id = ?,
                         is_active = 1,
                         is_verified = 1,
                         updated_at = ?
                     WHERE LOWER(email) = LOWER(?)
                     """,
-                    (hashed_pw, salt, full_name, role_val, department, club, now_iso, email),
+                    (hashed_pw, salt, full_name, role_val, department, club, faculty_id, now_iso, email),
                 )
                 updated_count += 1
                 logger.info("Updated existing demo account: %s [role=%s]", email, role_val)
@@ -133,8 +139,8 @@ def seed_demo_accounts(force: bool = False) -> dict[str, int]:
                     """
                     INSERT INTO users (
                         id, email, hashed_password, salt, full_name, role,
-                        department, club, is_active, is_verified, created_at, updated_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?, ?)
+                        department, club, faculty_id, is_active, is_verified, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?, ?)
                     """,
                     (
                         account["id"],
@@ -145,6 +151,7 @@ def seed_demo_accounts(force: bool = False) -> dict[str, int]:
                         role_val,
                         department,
                         club,
+                        faculty_id,
                         now_iso,
                         now_iso,
                     ),

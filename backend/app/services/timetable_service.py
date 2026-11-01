@@ -19,6 +19,7 @@ from app.models.timetable import (
     GenerateTimetableRequest,
     TimetableResponse,
     TimetableSchedule,
+    TimetableSessionAssignment,
     TimetableSolverMetadata,
     TimetableValidationResponse,
 )
@@ -91,14 +92,47 @@ class TimetableService:
                 raw = json.loads(TIMETABLE_DRAFT_PATH.read_text(encoding="utf-8"))
                 schedule = TimetableSchedule.model_validate(raw)
                 ds = get_dataset()
+                sess_by_id = {s.id: s for s in ds.sessions}
+                course_by_id = {c.id: c.title for c in ds.courses}
+                fac_by_id = {f.id: f.name for f in ds.faculty}
+
+                enriched_sessions: list[TimetableSessionAssignment] = []
+                for s in schedule.sessions:
+                    raw_s = sess_by_id.get(s.session_id)
+                    enriched_sessions.append(
+                        TimetableSessionAssignment(
+                            session_id=s.session_id,
+                            day=s.day,
+                            start_period=s.start_period,
+                            room_id=s.room_id,
+                            course_id=s.course_id or (raw_s.course_id if raw_s else None),
+                            course_title=s.course_title or (course_by_id.get(raw_s.course_id) if raw_s and raw_s.course_id else None),
+                            faculty_id=s.faculty_id or (raw_s.faculty_id if raw_s else None),
+                            faculty_name=s.faculty_name or (fac_by_id.get(raw_s.faculty_id) if raw_s and raw_s.faculty_id else None),
+                            groups=s.groups if s.groups else (raw_s.groups if raw_s else []),
+                            kind=s.kind or (raw_s.kind if raw_s else None),
+                            duration=s.duration if s.duration else (raw_s.duration if raw_s else 1),
+                        )
+                    )
+                schedule.sessions = enriched_sessions
+
                 validation = TimetableValidator.validate_schedule(ds, schedule)
                 hard_by_rule: dict[str, int] = {}
                 for v in validation.hard_violations:
                     r = v.get("rule", "UNKNOWN")
                     hard_by_rule[r] = hard_by_rule.get(r, 0) + 1
 
+                if len(schedule.sessions) == 0:
+                    status_val = "NOT_GENERATED"
+                elif validation.is_valid and len(schedule.sessions) == len(ds.sessions):
+                    status_val = "OPTIMAL"
+                elif validation.hard_violation_count > 0:
+                    status_val = "INFEASIBLE"
+                else:
+                    status_val = "FEASIBLE"
+
                 metadata = TimetableSolverMetadata(
-                    solver_status="OPTIMAL" if validation.is_valid else "FEASIBLE",
+                    solver_status=status_val,
                     solve_time_seconds=0.0,
                     scheduled_sessions=len(schedule.sessions),
                     total_sessions=len(ds.sessions),
