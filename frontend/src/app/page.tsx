@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { clearStoredAuth, getDatasetSummary, getStoredAuth, loginUser, logoutUser, setStoredAuth } from "@/lib/api";
 import type { DatasetSummary, User } from "@/lib/types";
 import { Sidebar, type NavTabId } from "@/components/Sidebar";
@@ -38,6 +39,7 @@ const DEFAULT_DEMO_ADMIN: User = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [summary, setSummary] = useState<DatasetSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +93,7 @@ export default function DashboardPage() {
     setCurrentUser(null);
     setAuthToken(null);
     setActiveTab("overview");
+    router.push("/login");
   };
 
   const fetchSummary = useCallback(async (isManualRefresh = false) => {
@@ -157,7 +160,7 @@ export default function DashboardPage() {
           onRefresh={() => fetchSummary(true)}
           activeTabLabel={activeTabLabel}
           currentUser={currentUser}
-          onOpenLogin={() => setIsLoginModalOpen(true)}
+          onOpenLogin={() => router.push("/login")}
           onLogout={handleLogout}
         />
 
@@ -167,7 +170,7 @@ export default function DashboardPage() {
               attemptedTab={activeTab}
               currentUser={currentUser}
               onReturnDashboard={() => setActiveTab("overview")}
-              onOpenLogin={() => setIsLoginModalOpen(true)}
+              onOpenLogin={() => router.push("/login")}
             />
           ) : activeTab === "timetable" ? (
             <TimetableManagementView currentUser={currentUser} />
@@ -182,7 +185,7 @@ export default function DashboardPage() {
           ) : activeTab === "settings" ? (
             <SettingsManagementView
               currentUser={currentUser}
-              onOpenLogin={() => setIsLoginModalOpen(true)}
+              onOpenLogin={() => router.push("/login")}
               onLogout={handleLogout}
               onNavigateTab={(tab) => setActiveTab(tab as NavTabId)}
             />
@@ -191,7 +194,7 @@ export default function DashboardPage() {
           ) : activeTab === "users" ? (
             <UserManagementView
               currentUser={currentUser}
-              onOpenLogin={() => setIsLoginModalOpen(true)}
+              onOpenLogin={() => router.push("/login")}
             />
           ) : activeTab === "faculty_groups" ? (
             <CoordinatorFacultyGroupsView />
@@ -279,7 +282,7 @@ export default function DashboardPage() {
                   </div>
 
                   <button
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => router.push("/login")}
                     className="shrink-0 flex items-center gap-1.5 rounded-xl border border-[#30303A] bg-[#202027] hover:bg-[#292933] hover:border-[#8B5CF6]/50 px-3.5 py-2 text-xs font-semibold text-[#F4F2FA] transition-all cursor-pointer shadow-xs"
                   >
                     <span>Switch Judge Account</span>
