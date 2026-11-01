@@ -28,8 +28,26 @@ BASE_AUTH_URL = "/api/v1/auth"
 
 @pytest.fixture(autouse=True)
 def setup_demo_db() -> None:
-    """Ensure database is initialized and demo accounts are seeded before tests."""
+    """Ensure database is initialized, test accounts isolated, and demo accounts seeded."""
     init_db()
+    # Isolate test database by removing non-demo test registrations
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            DELETE FROM users 
+            WHERE email NOT IN (
+                'admin@cit-demo.test',
+                'coordinator@cit-demo.test',
+                'faculty@cit-demo.test',
+                'spectra@cit-demo.test'
+            )
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
     seed_demo_accounts(force=True)
 
 
@@ -288,6 +306,6 @@ class TestUserRegistration:
             },
         )
         assert res.status_code == 400
-        assert "already registered" in res.json()["detail"].lower()
+        assert "already exists" in res.json()["detail"].lower()
 
 

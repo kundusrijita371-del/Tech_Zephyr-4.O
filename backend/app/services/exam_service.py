@@ -10,6 +10,7 @@ from app.config import (
     EXAMS_DRAFT_PATH,
     EXPORTS_DIR,
     SCHEDULE_DRAFT_PATH,
+    SCHEDULE_FINAL_PATH,
     TIMETABLE_DRAFT_PATH,
 )
 from app.engine.exam_solver import ExamSolver
@@ -156,14 +157,25 @@ class ExamService:
                 "exams": [],
             }
 
-            if SCHEDULE_DRAFT_PATH.exists():
+            if SCHEDULE_FINAL_PATH.exists():
+                try:
+                    existing = json.loads(SCHEDULE_FINAL_PATH.read_text(encoding="utf-8"))
+                    if isinstance(existing, dict) and len(existing.get("sessions", [])) == 189:
+                        combined_schedule["team"] = existing.get("team", schedule.team)
+                        combined_schedule["dataset_id"] = existing.get("dataset_id", schedule.dataset_id)
+                        combined_schedule["sessions"] = existing.get("sessions", [])
+                        combined_schedule["fest_week"] = existing.get("fest_week", {"bookings": [], "session_overrides": []})
+                except Exception:
+                    pass
+
+            if not combined_schedule.get("sessions") and SCHEDULE_DRAFT_PATH.exists():
                 try:
                     combined_schedule = json.loads(
                         SCHEDULE_DRAFT_PATH.read_text(encoding="utf-8")
                     )
                 except Exception:
                     pass
-            elif TIMETABLE_DRAFT_PATH.exists():
+            elif not combined_schedule.get("sessions") and TIMETABLE_DRAFT_PATH.exists():
                 try:
                     tt_raw = json.loads(
                         TIMETABLE_DRAFT_PATH.read_text(encoding="utf-8")
@@ -171,6 +183,15 @@ class ExamService:
                     combined_schedule["sessions"] = tt_raw.get("sessions", [])
                 except Exception:
                     pass
+
+            if not combined_schedule.get("sessions"):
+                from app.services.timetable_service import TimetableService
+                tt_latest = TimetableService.get_latest()
+                if tt_latest and tt_latest.schedule.sessions and len(tt_latest.schedule.sessions) == 189:
+                    combined_schedule["sessions"] = [s.model_dump() for s in tt_latest.schedule.sessions]
+                else:
+                    tt_gen = TimetableService.generate(dataset=get_dataset())
+                    combined_schedule["sessions"] = [s.model_dump() for s in tt_gen.schedule.sessions]
 
             # Update exams block matching the official starter pack format
             combined_schedule["exams"] = [

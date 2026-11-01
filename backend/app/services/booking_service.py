@@ -354,18 +354,42 @@ class BookingService:
                 "exams": [],
             }
 
-            if SCHEDULE_DRAFT_PATH.exists():
+            if SCHEDULE_FINAL_PATH.exists():
                 try:
-                    combined = json.loads(SCHEDULE_DRAFT_PATH.read_text(encoding="utf-8"))
-                    combined["fest_week"] = fest_week.model_dump()
+                    existing = json.loads(SCHEDULE_FINAL_PATH.read_text(encoding="utf-8"))
+                    if isinstance(existing, dict) and len(existing.get("sessions", [])) == 189:
+                        combined["team"] = existing.get("team", "HackerX")
+                        combined["dataset_id"] = existing.get("dataset_id", "cit-public-v1")
+                        combined["sessions"] = existing.get("sessions", [])
+                        combined["exams"] = existing.get("exams", [])
                 except Exception:
                     pass
-            elif TIMETABLE_DRAFT_PATH.exists():
+
+            if not combined.get("sessions") and SCHEDULE_DRAFT_PATH.exists():
+                try:
+                    draft = json.loads(SCHEDULE_DRAFT_PATH.read_text(encoding="utf-8"))
+                    if isinstance(draft, dict) and len(draft.get("sessions", [])) == 189:
+                        combined["sessions"] = draft.get("sessions", [])
+                        if not combined.get("exams"):
+                            combined["exams"] = draft.get("exams", [])
+                except Exception:
+                    pass
+
+            if not combined.get("sessions") and TIMETABLE_DRAFT_PATH.exists():
                 try:
                     tt_raw = json.loads(TIMETABLE_DRAFT_PATH.read_text(encoding="utf-8"))
-                    combined["sessions"] = tt_raw.get("sessions", [])
+                    if isinstance(tt_raw, dict) and len(tt_raw.get("sessions", [])) == 189:
+                        combined["sessions"] = tt_raw.get("sessions", [])
                 except Exception:
                     pass
+
+            if not combined.get("sessions"):
+                tt_latest = TimetableService.get_latest()
+                if tt_latest and tt_latest.schedule.sessions and len(tt_latest.schedule.sessions) == 189:
+                    combined["sessions"] = [s.model_dump() for s in tt_latest.schedule.sessions]
+                else:
+                    tt_gen = TimetableService.generate(dataset=get_dataset())
+                    combined["sessions"] = [s.model_dump() for s in tt_gen.schedule.sessions]
 
             SCHEDULE_DRAFT_PATH.write_text(
                 json.dumps(combined, indent=2), encoding="utf-8"

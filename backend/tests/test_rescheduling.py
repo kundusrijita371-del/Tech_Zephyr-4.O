@@ -53,9 +53,13 @@ def dataset() -> Dataset:
 def baseline_schedule(dataset: Dataset) -> dict:
     """Ensure baseline schedule exists with timetable, exams, and bookings."""
     sched = ReschedulingService.get_current_schedule()
-    if not sched.get("sessions") or not sched.get("exams") or not sched.get("fest_week", {}).get("bookings"):
-        # Make sure exams and bookings are populated
+    if not sched.get("sessions") or len(sched.get("sessions", [])) != 189:
+        TimetableService.generate(dataset=dataset)
+        sched = ReschedulingService.get_current_schedule()
+    if not sched.get("exams"):
         ExamService.generate(dataset=dataset)
+        sched = ReschedulingService.get_current_schedule()
+    if not sched.get("fest_week", {}).get("bookings"):
         BookingService.generate(dataset=dataset)
         sched = ReschedulingService.get_current_schedule()
     return sched

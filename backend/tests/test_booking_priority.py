@@ -31,6 +31,12 @@ def dataset() -> Dataset:
     return get_dataset()
 
 
+@pytest.fixture(autouse=True)
+def ensure_default_priority(dataset: Dataset) -> None:
+    from app.services.settings_service import DEFAULT_PRIORITY_ORDER
+    dataset.priority_order = list(DEFAULT_PRIORITY_ORDER)
+
+
 class TestRoleCategoryCaps:
     def test_admin_role_cap(self, dataset: Dataset) -> None:
         # Admin can claim institute_event

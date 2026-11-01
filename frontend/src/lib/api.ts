@@ -37,57 +37,20 @@ import type {
 } from "./types";
 
 
-/**
- * Resolves the backend base URL at runtime:
- * - On the server (Next.js functions / SSR / Route Handlers): Reads the `BACKEND_URL`
- *   binding injected by Vercel Services, falling back to NEXT_PUBLIC_API_URL or http://localhost:8000.
- * - In the browser: Uses NEXT_PUBLIC_API_URL if configured; otherwise in a deployed
- *   Vercel services environment where /api/(.*) rewrites to the backend service, uses
- *   the relative path ("") or in local development falls back to http://localhost:8000.
- */
-export function getBackendBaseUrl(): string {
-  if (typeof window === "undefined") {
-    // Vercel service binding injects target's internal URL into BACKEND_URL
-    const bound = process.env.BACKEND_URL;
-    if (bound) return bound.replace(/\/$/, "");
+// Base URL is injected at build time from the environment variable.
+// Falls back to localhost:8000 for local development.
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
+  "http://localhost:8000";
 
-    const publicUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (publicUrl) return publicUrl.replace(/\/$/, "");
-
-    return "http://localhost:8000";
-  }
-
-  // Client-side execution
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
-  }
-
-  // If running in browser on localhost:3000 without proxy, route to backend port 8000
-  if (
-    typeof window.location !== "undefined" &&
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
-    window.location.port === "3000"
-  ) {
-    return "http://localhost:8000";
-  }
-
-  // On Vercel single-project deployments, top-level rewrite forwards /api/(.*) to backend
-  return "";
-}
-
-export const API_BASE = getBackendBaseUrl();
-
-export function getV1(): string {
-  const base = getBackendBaseUrl();
-  return base ? `${base}/api/v1` : "/api/v1";
-}
+const V1 = `${API_BASE}/api/v1`;
 
 // ---------------------------------------------------------------------------
 // Internal helper
 // ---------------------------------------------------------------------------
 
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${getV1()}${path}`, {
+  const res = await fetch(`${V1}${path}`, {
     cache: "no-store",
   });
 
@@ -106,9 +69,7 @@ async function get<T>(path: string): Promise<T> {
 
 /** Ping the backend health endpoint. */
 export async function checkHealth(): Promise<{ status: string }> {
-  const base = getBackendBaseUrl();
-  const url = base ? `${base}/api/health` : "/api/health";
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(`${API_BASE}/health`, { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Health check failed: ${res.status} ${res.statusText}`);
   }
@@ -199,7 +160,7 @@ export async function generateTimetable(options?: {
   num_workers?: number;
   optimize_soft?: boolean;
 }): Promise<TimetableResponse> {
-  const res = await fetch(`${getV1()}/timetable/generate`, {
+  const res = await fetch(`${V1}/timetable/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(options ?? {}),
@@ -232,7 +193,7 @@ export const getTimetableValidation = (): Promise<TimetableValidationResponse> =
 export async function generateExams(
   options?: GenerateExamRequest
 ): Promise<ExamResponse> {
-  const res = await fetch(`${getV1()}/exams/generate`, {
+  const res = await fetch(`${V1}/exams/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(options ?? {}),
@@ -271,7 +232,7 @@ export const getBooking = (requestId: string): Promise<BookingRequestItem> =>
 
 /** Run deterministic priority-aware booking allocation for all 25 requests. */
 export async function generateBookings(): Promise<BookingValidationReport> {
-  const res = await fetch(`${getV1()}/bookings/generate`, {
+  const res = await fetch(`${V1}/bookings/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     cache: "no-store",
@@ -294,7 +255,7 @@ export const getBookingValidation = (): Promise<BookingValidationReport> =>
 export async function evaluateBooking(
   request: EvaluateBookingRequest
 ): Promise<EvaluateBookingResponse> {
-  const res = await fetch(`${getV1()}/bookings/evaluate`, {
+  const res = await fetch(`${V1}/bookings/evaluate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
@@ -315,7 +276,7 @@ export async function recordBookingDecision(
   requestId: string,
   payload: ManualDecisionRequest
 ): Promise<BookingValidationReport> {
-  const res = await fetch(`${getV1()}/bookings/${encodeURIComponent(requestId)}/decision`, {
+  const res = await fetch(`${V1}/bookings/${encodeURIComponent(requestId)}/decision`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -340,7 +301,7 @@ export async function recordBookingDecision(
 export async function previewDisruptionRepair(
   payload: DisruptionRequestPayload
 ): Promise<RepairProposalData> {
-  const res = await fetch(`${getV1()}/rescheduling/preview`, {
+  const res = await fetch(`${V1}/rescheduling/preview`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -374,7 +335,7 @@ export async function approveRepairProposal(
   proposalId: string,
   decision: ProposalDecisionPayload
 ): Promise<ScheduleVersionAuditRecord> {
-  const res = await fetch(`${getV1()}/rescheduling/proposals/${encodeURIComponent(proposalId)}/approve`, {
+  const res = await fetch(`${V1}/rescheduling/proposals/${encodeURIComponent(proposalId)}/approve`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(decision),
@@ -396,7 +357,7 @@ export async function rejectRepairProposal(
   proposalId: string,
   decision: ProposalDecisionPayload
 ): Promise<RepairProposalData> {
-  const res = await fetch(`${getV1()}/rescheduling/proposals/${encodeURIComponent(proposalId)}/reject`, {
+  const res = await fetch(`${V1}/rescheduling/proposals/${encodeURIComponent(proposalId)}/reject`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(decision),
@@ -425,7 +386,7 @@ export const getScheduleVersionHistory = (): Promise<ScheduleVersionAuditRecord[
 export async function sendAssistantChat(
   payload: AssistantChatRequestPayload
 ): Promise<AssistantChatResponseData> {
-  const res = await fetch(`${getV1()}/assistant/chat`, {
+  const res = await fetch(`${V1}/assistant/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -452,7 +413,7 @@ export const getAssistantHealth = (): Promise<AssistantHealthData> =>
 
 /** Authenticate user with email and password, returning session token & user profile. */
 export async function loginUser(email: string, password: string): Promise<TokenResponse> {
-  const res = await fetch(`${getV1()}/auth/login`, {
+  const res = await fetch(`${V1}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -469,7 +430,7 @@ export async function loginUser(email: string, password: string): Promise<TokenR
 
 /** Retrieve currently authenticated user profile using Bearer token. */
 export async function getCurrentUser(token: string): Promise<User> {
-  const res = await fetch(`${getV1()}/auth/me`, {
+  const res = await fetch(`${V1}/auth/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -485,7 +446,7 @@ export async function getCurrentUser(token: string): Promise<User> {
 
 /** Invalidate session token upon logout. */
 export async function logoutUser(token: string): Promise<void> {
-  await fetch(`${getV1()}/auth/logout`, {
+  await fetch(`${V1}/auth/logout`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -536,7 +497,7 @@ export function clearStoredAuth(): void {
 /** Fetch active booking priority order with category metadata. */
 export async function getBookingPriority(token?: string): Promise<PriorityOrderResponse> {
   const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-  const res = await fetch(`${getV1()}/settings/priority`, { headers, cache: "no-store" });
+  const res = await fetch(`${V1}/settings/priority`, { headers, cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to fetch booking priority: ${res.statusText}`);
   }
@@ -548,7 +509,7 @@ export async function updateBookingPriority(
   priorityOrder: string[],
   token: string
 ): Promise<PriorityOrderResponse> {
-  const res = await fetch(`${getV1()}/settings/priority`, {
+  const res = await fetch(`${V1}/settings/priority`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -566,7 +527,7 @@ export async function updateBookingPriority(
 /** Retrieve live system status diagnostics across all subsystems. */
 export async function getSystemStatus(token?: string): Promise<SystemStatusResponse> {
   const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-  const res = await fetch(`${getV1()}/settings/system-status`, { headers, cache: "no-store" });
+  const res = await fetch(`${V1}/settings/system-status`, { headers, cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to fetch system status: ${res.statusText}`);
   }
@@ -576,7 +537,7 @@ export async function getSystemStatus(token?: string): Promise<SystemStatusRespo
 /** Retrieve real validator reports across 4 domains. */
 export async function getValidatorReports(token?: string): Promise<ValidatorReportsResponse> {
   const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-  const res = await fetch(`${getV1()}/settings/validator-reports`, { headers, cache: "no-store" });
+  const res = await fetch(`${V1}/settings/validator-reports`, { headers, cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to fetch validator reports: ${res.statusText}`);
   }
@@ -585,7 +546,7 @@ export async function getValidatorReports(token?: string): Promise<ValidatorRepo
 
 /** Trigger benchmark demo data reset (Admin only). */
 export async function resetDemoData(token: string): Promise<DemoResetResponse> {
-  const res = await fetch(`${getV1()}/settings/demo-reset`, {
+  const res = await fetch(`${V1}/settings/demo-reset`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -601,7 +562,7 @@ export async function previewDataset(
   datasetJson: Record<string, unknown>,
   token: string
 ): Promise<DatasetPreviewResponse> {
-  const res = await fetch(`${getV1()}/settings/dataset/preview`, {
+  const res = await fetch(`${V1}/settings/dataset/preview`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -622,7 +583,7 @@ export async function applyDataset(
   confirm: boolean,
   token: string
 ): Promise<{ status: string; message: string; dataset_id: string }> {
-  const res = await fetch(`${getV1()}/settings/dataset/apply`, {
+  const res = await fetch(`${V1}/settings/dataset/apply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -639,7 +600,7 @@ export async function applyDataset(
 
 /** Reload dataset from disk and invalidate backend caches (Admin only). */
 export async function reloadDataset(token: string): Promise<{ status: string; message: string }> {
-  const res = await fetch(`${getV1()}/settings/dataset/reload`, {
+  const res = await fetch(`${V1}/settings/dataset/reload`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -652,7 +613,7 @@ export async function reloadDataset(token: string): Promise<{ status: string; me
 
 /** Fetch administrative audit logs (Admin only). */
 export async function getAuditLogs(token: string, limit = 50): Promise<AuditLogEntry[]> {
-  const res = await fetch(`${getV1()}/settings/audit-log?limit=${limit}`, {
+  const res = await fetch(`${V1}/settings/audit-log?limit=${limit}`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
@@ -672,7 +633,7 @@ export async function registerUser(payload: {
   department?: string | null;
   club?: string | null;
 }): Promise<TokenResponse> {
-  const res = await fetch(`${getV1()}/auth/register`, {
+  const res = await fetch(`${V1}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

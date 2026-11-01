@@ -61,22 +61,22 @@ class ReschedulingService:
     def get_current_schedule(cls) -> dict[str, Any]:
         """Load the active schedule from disk or generate a baseline if not yet present."""
         cls._ensure_dirs()
-        if SCHEDULE_FINAL_PATH.exists():
-            try:
-                return json.loads(SCHEDULE_FINAL_PATH.read_text(encoding="utf-8"))
-            except Exception as exc:
-                logger.warning("Error reading %s: %s", SCHEDULE_FINAL_PATH, exc)
+        for path in (SCHEDULE_FINAL_PATH, SCHEDULE_DRAFT_PATH):
+            if path.exists():
+                try:
+                    sched = json.loads(path.read_text(encoding="utf-8"))
+                    if isinstance(sched, dict) and len(sched.get("sessions", [])) == 189:
+                        return sched
+                except Exception as exc:
+                    logger.warning("Error reading %s: %s", path, exc)
 
-        if SCHEDULE_DRAFT_PATH.exists():
-            try:
-                return json.loads(SCHEDULE_DRAFT_PATH.read_text(encoding="utf-8"))
-            except Exception:
-                pass
-
-        # Fallback: trigger timetable generation to create a baseline
-        logger.info("No active schedule found on disk. Generating baseline timetable...")
+        # Fallback: trigger timetable generation to create a complete baseline
+        logger.info("No active complete schedule found on disk. Generating baseline timetable...")
         ds = get_dataset()
-        tt_res = TimetableService.generate(dataset=ds)
+        tt_res = TimetableService.get_latest()
+        if tt_res is None or not tt_res.schedule.sessions or len(tt_res.schedule.sessions) != 189:
+            tt_res = TimetableService.generate(dataset=ds)
+
         combined = {
             "team": tt_res.schedule.team,
             "dataset_id": ds.dataset_id,

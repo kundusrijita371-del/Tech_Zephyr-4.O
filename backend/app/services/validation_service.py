@@ -6,29 +6,38 @@ without modifying the starter pack files.
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
 from typing import Any
 
-from app.config import REPO_ROOT
+from app.config import VALIDATOR_DIR
 from app.models.booking import BookingValidationReport, FestWeekSchedule
 from app.models.dataset import Dataset
 from app.models.exam import ExamSchedule, ExamValidationResponse
 from app.models.timetable import TimetableSchedule, TimetableValidationResponse
 
-# Ensure starter-pack directory is on sys.path for importing validator
-_STARTER_PACK_DIR = (
-    REPO_ROOT / "starter-pack" / "CrunchWeek_StarterPack"
-).resolve()
+# Ensure validator directory is on sys.path for importing validator
+_STARTER_PACK_DIR = VALIDATOR_DIR
 if str(_STARTER_PACK_DIR) not in sys.path:
     sys.path.insert(0, str(_STARTER_PACK_DIR))
 
 try:
     import validator  # Official validator module
-except ImportError as exc:
-    raise ImportError(
-        f"Failed to import official validator from {_STARTER_PACK_DIR}: {exc}"
-    ) from exc
+except ImportError:
+    validator_file = _STARTER_PACK_DIR / "validator.py"
+    if validator_file.exists():
+        spec = importlib.util.spec_from_file_location("validator", str(validator_file))
+        if spec and spec.loader:
+            validator = importlib.util.module_from_spec(spec)
+            sys.modules["validator"] = validator
+            spec.loader.exec_module(validator)
+        else:
+            raise ImportError(f"Failed to create module spec for validator at {validator_file}")
+    else:
+        raise ImportError(
+            f"Failed to import official validator from {_STARTER_PACK_DIR}: validator.py not found"
+        )
 
 
 class TimetableValidator:

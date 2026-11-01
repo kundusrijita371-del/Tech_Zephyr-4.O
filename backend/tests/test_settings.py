@@ -71,6 +71,25 @@ def spectra_headers(client: TestClient) -> dict[str, str]:
 class TestBookingPrioritySettings:
     """Tests for viewing and updating the 6-stage booking priority queue."""
 
+    @pytest.fixture(autouse=True)
+    def restore_priority_order_after_test(self):
+        yield
+        from app.services.settings_service import DEFAULT_PRIORITY_ORDER
+        from app.services.dataset_service import get_dataset
+        from app.services.database import get_db_connection
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM system_settings WHERE key = 'booking_priority_order'")
+            conn.commit()
+        finally:
+            conn.close()
+        try:
+            ds = get_dataset()
+            ds.priority_order = list(DEFAULT_PRIORITY_ORDER)
+        except Exception:
+            pass
+
     def test_get_booking_priority_authenticated(self, client: TestClient, faculty_headers: dict[str, str]) -> None:
         """Any authenticated user can inspect the current booking priority order."""
         res = client.get(f"{BASE_SETTINGS_URL}/priority", headers=faculty_headers)

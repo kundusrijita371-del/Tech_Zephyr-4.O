@@ -1,4 +1,4 @@
-"""Root entrypoint for Vercel and ASGI servers."""
+"""Root entrypoint for ASGI servers and zero-config deployment."""
 
 from app.main import app
 
